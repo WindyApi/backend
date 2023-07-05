@@ -40,3 +40,4 @@ build/
 *.log
 *.gz
 application.yml
+config.yml
