@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.whiteleaf03.api.modal.dto.LoginDTO;
 import top.whiteleaf03.api.modal.dto.RegisterDTO;
-import top.whiteleaf03.api.service.UserService;
+import top.whiteleaf03.api.service.user.UserService;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**

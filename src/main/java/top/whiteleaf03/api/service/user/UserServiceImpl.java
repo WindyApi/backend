@@ -1,4 +1,4 @@
-package top.whiteleaf03.api.service;
+package top.whiteleaf03.api.service.user;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import org.springframework.beans.factory.annotation.Autowired;

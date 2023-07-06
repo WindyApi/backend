@@ -1,4 +1,4 @@
-package top.whiteleaf03.api.service;
+package top.whiteleaf03.api.service.user;
 
 import top.whiteleaf03.api.modal.dto.LoginDTO;
 import top.whiteleaf03.api.modal.dto.RegisterDTO;
