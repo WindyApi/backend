@@ -8,8 +8,8 @@ import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.dto.LoginDTO;
 import top.whiteleaf03.api.modal.dto.RegisterDTO;
 import top.whiteleaf03.api.modal.entity.User;
-import top.whiteleaf03.api.modal.vo.LoginVo;
-import top.whiteleaf03.api.modal.vo.RegisterVo;
+import top.whiteleaf03.api.modal.vo.LoginVO;
+import top.whiteleaf03.api.modal.vo.RegisterVO;
 import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
 import top.whiteleaf03.api.util.TokenUtils;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         //将用户信息插入数据库
         userMapper.insert(registerDTO);
 
-        return ResponseResult.success(new RegisterVo(accessKey, secretKey));
+        return ResponseResult.success(new RegisterVO(accessKey, secretKey));
     }
 
     /**
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
             redisCache.setCacheObject("[OnlineUserToken]" + user.getId(), token, 1, TimeUnit.HOURS);
             redisCache.setCacheObject("[OnlineUserInfo]" + user.getId(), user, 1, TimeUnit.HOURS);
 
-            return ResponseResult.success(new LoginVo(user, token));
+            return ResponseResult.success(new LoginVO(user, token));
         } else {
             //密码错误
             return ResponseResult.authFailed("密码错误");

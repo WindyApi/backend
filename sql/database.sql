@@ -23,3 +23,22 @@ create table user
         unique (account)
 )
     comment '用户' charset utf8;
+
+drop table if exists interface_info;
+create table interface_info
+(
+    id             bigint auto_increment comment 'id' primary key,
+    `name`         varchar(32)                          not null unique comment '接口名称',
+    `describe`     varchar(256)                         not null comment '接口描述',
+    method         varchar(16)                          not null comment '请求类型',
+    url            varchar(256)                         not null comment '接口地址',
+    params         text                                 null comment '请求参数',
+    requestHeader  text                                 null comment '请求头',
+    responseHeader text                                 null comment '响应头',
+    `status`       tinyint(1) default 0                 not null comment '接口状态 0 下线 1 在线',
+    userId         bigint                               not null comment '创建人id',
+    createTime     datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime     datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete       tinyint    default 0                 not null comment '是否删除'
+)
+    comment '接口信息' charset utf8;
