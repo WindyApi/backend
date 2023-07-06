@@ -10,10 +10,12 @@ import top.whiteleaf03.api.modal.dto.RegisterDTO;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.LoginVo;
 import top.whiteleaf03.api.modal.vo.RegisterVo;
+import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
 import top.whiteleaf03.api.util.TokenUtils;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author WhiteLeaf03
@@ -22,11 +24,13 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
     private final GlobalConfig globalConfig;
     private final UserMapper userMapper;
+    private final RedisCache redisCache;
 
     @Autowired
-    public UserServiceImpl(GlobalConfig globalConfig, UserMapper userMapper) {
+    public UserServiceImpl(GlobalConfig globalConfig, UserMapper userMapper, RedisCache redisCache) {
         this.globalConfig = globalConfig;
         this.userMapper = userMapper;
+        this.redisCache = redisCache;
     }
 
     /**
@@ -72,6 +76,11 @@ public class UserServiceImpl implements UserService {
         if (DigestUtil.bcryptCheck(loginDTO.getPassword(), user.getPassword())) {
             //密码正确
             String token = TokenUtils.createToken(user.getId().toString());
+
+            //保存token和用户信息
+            redisCache.setCacheObject("[OnlineUserToken]" + user.getId(), token, 1, TimeUnit.HOURS);
+            redisCache.setCacheObject("[OnlineUserInfo]" + user.getId(), user, 1, TimeUnit.HOURS);
+
             return ResponseResult.success(new LoginVo(user, token));
         } else {
             //密码错误
