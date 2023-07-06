@@ -3,14 +3,14 @@
 
 <mapper namespace="top.whiteleaf03.api.mapper.UserMapper">
     <insert id="insert">
-        INSERT INTO windyapi.user (nickname, account, gender, password, accessKey, secretKey)
+        INSERT INTO windy_api.user (nickname, account, gender, password, accessKey, secretKey)
             VALUE (#{nickname}, #{account}, #{gender}, #{password}, #{accessKey}, #{secretKey});
     </insert>
 
     <select id="selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPasswordAndCreateTimeByAccount"
             resultType="top.whiteleaf03.api.modal.entity.User">
         SELECT id, nickname, avatar, gender, role, password, createTime
-        FROM windyapi.user
+        FROM windy_api.user
         WHERE account = #{account} AND isDelete = false;
     </select>
 </mapper>

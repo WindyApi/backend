@@ -1,7 +1,7 @@
-drop database if exists windyapi;
-create database windyapi;
+drop database if exists windy_api;
+create database windy_api;
 
-use windyapi;
+use windy_api;
 
 drop table if exists user;
 create table user
@@ -22,4 +22,4 @@ create table user
     constraint uni_userAccount
         unique (account)
 )
-    comment '用户';
+    comment '用户' charset utf8;
