@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.whiteleaf03.api.mapper.InterfaceInfoMapper">
+    <insert id="insert">
+        INSERT INTO windy_api.interface_info (name, `describe`, method, url, params, requestHeader, responseHeader, userId)
+            VALUE (#{name}, #{describe}, #{method}, #{url}, #{params}, #{requestHeader}, #{responseHeader}, #{userId});
+    </insert>
+
+    <select id="selectIdAndNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderByStatusAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO">
+        SELECT id, name, `describe`, method, url, params, requestHeader, responseHeader
+        FROM windy_api.interface_info
+        WHERE status = 1 AND isDelete = 0
+    </select>
+
+    <update id="updateStatusById">
+        UPDATE windy_api.interface_info
+        SET status = #{status}
+        WHERE id = #{id};
+    </update>
+</mapper>
