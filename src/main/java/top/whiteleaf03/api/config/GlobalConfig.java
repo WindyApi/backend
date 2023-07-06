@@ -17,8 +17,8 @@ import java.io.IOException;
 @Data
 @PropertySource(value = "classpath:config.yml", factory = PropertySourceFactoryImpl.class)
 public class GlobalConfig {
-    @Value("${key.slat}")
-    private String slat;
+    @Value("${key.salt}")
+    private String salt;
 }
 
 class PropertySourceFactoryImpl implements PropertySourceFactory {

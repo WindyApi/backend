@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
@@ -14,6 +15,7 @@ import top.whiteleaf03.api.util.ResponseResult;
 @Component
 public class GlobalExceptionConfig {
     @ExceptionHandler(Exception.class)
+    @ResponseBody
     public ResponseResult handleException(Exception e) {
         log.error(e.getMessage());
         return ResponseResult.error(e.getMessage());
