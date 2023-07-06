@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import top.whiteleaf03.api.modal.entity.User;
 
+import java.util.Date;
+
 /**
  * @author WhiteLeaf03
  */
@@ -34,6 +36,11 @@ public class LoginVo {
     private String role;
 
     /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
      * token
      */
     private String token;
@@ -43,6 +50,7 @@ public class LoginVo {
         this.avatar = user.getAvatar();
         this.gender = user.getGender();
         this.role = user.getRole();
+        this.createTime = user.getCreateTime();
         this.token = token;
     }
 }

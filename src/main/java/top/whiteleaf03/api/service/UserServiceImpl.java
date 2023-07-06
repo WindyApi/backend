@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseResult login(LoginDTO loginDTO) {
         //根据账号查询用户
-        User user = userMapper.selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPassword(loginDTO.getAccount());
+        User user = userMapper.selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPasswordAndCreateTimeByAccount(loginDTO.getAccount());
 
         if (Objects.isNull(user)) {
             //未查询到用户

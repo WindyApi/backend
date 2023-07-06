@@ -7,9 +7,9 @@
             VALUE (#{nickname}, #{account}, #{gender}, #{password}, #{accessKey}, #{secretKey});
     </insert>
 
-    <select id="selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPassword"
+    <select id="selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPasswordAndCreateTimeByAccount"
             resultType="top.whiteleaf03.api.modal.entity.User">
-        SELECT id, nickname, avatar, gender, role, password
+        SELECT id, nickname, avatar, gender, role, password, createTime
         FROM windyapi.user
         WHERE account = #{account} AND isDelete = false;
     </select>

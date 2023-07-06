@@ -22,5 +22,5 @@ public interface UserMapper {
      * @param account 账号
      * @return 用户信息
      */
-    User selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPassword(String account);
+    User selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPasswordAndCreateTimeByAccount(String account);
 }
