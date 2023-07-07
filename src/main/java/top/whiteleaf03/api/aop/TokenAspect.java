@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import top.whiteleaf03.api.modal.entity.User;
@@ -54,6 +55,7 @@ public class TokenAspect {
                 //token合法，获取用户
                 User user = redisCache.getCacheObject("[OnlineUserInfo]" + id);
                 if (ObjectUtil.isNotNull(user)) {
+                    RequestContextHolder.getRequestAttributes().setAttribute("UserInfo", user, RequestAttributes.SCOPE_REQUEST);
                     //获取到用户，鉴权
                     if (StrUtil.isNotBlank(tokenCheck.value())) {
                         //对身份有要求
