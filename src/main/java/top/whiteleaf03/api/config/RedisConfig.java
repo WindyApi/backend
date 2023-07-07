@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import top.whiteleaf03.api.util.HutoolRedisSerializer;
+import top.whiteleaf03.api.util.FastJsonRedisSerializer;
 
 /**
  * @author WhiteLeaf03
@@ -19,7 +19,7 @@ public class RedisConfig {
         template.setConnectionFactory(connectionFactory);
 
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        HutoolRedisSerializer serializer = new HutoolRedisSerializer();
+        FastJsonRedisSerializer serializer = new FastJsonRedisSerializer(Object.class);
 
         // 使用StringRedisSerializer来序列化和反序列化redis的key值
         template.setKeySerializer(stringRedisSerializer);
