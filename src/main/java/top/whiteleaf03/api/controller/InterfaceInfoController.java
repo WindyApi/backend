@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.whiteleaf03.api.aop.TokenCheck;
+import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
 import top.whiteleaf03.api.modal.dto.QueryAliveInterfaceByPageDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
@@ -45,5 +46,11 @@ public class InterfaceInfoController {
         }
         //未携带页号，返回分页数量
         return interfaceInfoService.queryAliveInterfacePageSize();
+    }
+
+    @TokenCheck("")
+    @GetMapping("")
+    public ResponseResult queryInterfaceDoc(InterfaceIdDTO interfaceIdDTO) {
+        return interfaceInfoService.queryInterfaceDocById(interfaceIdDTO);
     }
 }

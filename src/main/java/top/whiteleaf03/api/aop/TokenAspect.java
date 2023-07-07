@@ -20,6 +20,7 @@ import top.whiteleaf03.api.util.ResponseResult;
 import top.whiteleaf03.api.util.TokenUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * @author WhiteLeaf03
@@ -51,6 +52,9 @@ public class TokenAspect {
                 return ResponseResult.authFailed("token非法");
             }
             String validToken = redisCache.getCacheObject("[OnlineUserToken]" + id);
+            if (StrUtil.isBlank(validToken)) {
+                return ResponseResult.authFailed("token已过期");
+            }
             if (validToken.equals(token)) {
                 //token合法，获取用户
                 User user = redisCache.getCacheObject("[OnlineUserInfo]" + id);

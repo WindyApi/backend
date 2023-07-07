@@ -1,5 +1,6 @@
 package top.whiteleaf03.api.service.interfaceinfo;
 
+import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
 import top.whiteleaf03.api.modal.dto.QueryAliveInterfaceByPageDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
@@ -49,4 +50,12 @@ public interface InterfaceInfoService {
      * @return 返回结果
      */
     ResponseResult queryAliveInterfaceByPage(QueryAliveInterfaceByPageDTO queryAliveInterfaceByPageDTO);
+
+    /**
+     * 获取接口文档
+     *
+     * @param interfaceIdDTO 接口id
+     * @return 返回结果
+     */
+    ResponseResult queryInterfaceDocById(InterfaceIdDTO interfaceIdDTO);
 }

@@ -1,9 +1,11 @@
 package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
 import top.whiteleaf03.api.modal.dto.QueryAliveInterfaceByPageDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
+import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
 
 import java.util.List;
@@ -33,7 +35,15 @@ public interface InterfaceInfoMapper {
      * @param queryAliveInterfaceByPageDTO 包含页号
      * @return 返回活跃接口信息
      */
-    List<OnlineInterfaceInfoVO> selectIdAndNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderByPageNumAndStatusAndIsDelete(QueryAliveInterfaceByPageDTO queryAliveInterfaceByPageDTO);
+    List<OnlineInterfaceInfoVO> selectIdAndNameAndDescribeByPageNumAndStatusAndIsDelete(QueryAliveInterfaceByPageDTO queryAliveInterfaceByPageDTO);
+
+    /**
+     * 获取接口文档
+     *
+     * @param interfaceIdDTO 包含页号
+     * @return 返回活跃接口信息
+     */
+    InterfaceDocVO selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(InterfaceIdDTO interfaceIdDTO);
 
     /**
      * 上线/下线接口

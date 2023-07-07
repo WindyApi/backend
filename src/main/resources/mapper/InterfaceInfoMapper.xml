@@ -13,12 +13,18 @@
         WHERE status = 1 AND isDelete = 0;
     </select>
 
-    <select id="selectIdAndNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderByPageNumAndStatusAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO">
-        SELECT id, name, `describe`, method, url, params, requestHeader, responseHeader
+    <select id="selectIdAndNameAndDescribeByPageNumAndStatusAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO">
+        SELECT id, name, `describe`
         FROM windy_api.interface_info
         WHERE status = 1 AND isDelete = 0
         ORDER BY id
         LIMIT ${(pageNum - 1) * 10}, 10;
+    </select>
+
+    <select id="selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.InterfaceDocVO">
+        SELECT name, `describe`, method, url, params, requestHeader, responseHeader, status, createTime, updateTime
+        FROM windy_api.interface_info
+        WHERE id = #{id} AND isDelete = false;
     </select>
 
     <update id="updateStatusById">
