@@ -3,9 +3,12 @@ package top.whiteleaf03.api.service.interfaceinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
+import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
 import top.whiteleaf03.api.util.ResponseResult;
 
@@ -32,6 +35,8 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
      */
     @Override
     public ResponseResult insert(NewInterfaceDTO newInterfaceDTO) {
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+        newInterfaceDTO.setUserId(user.getId());
         interfaceInfoMapper.insert(newInterfaceDTO);
         return ResponseResult.success();
     }
