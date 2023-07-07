@@ -43,7 +43,12 @@ public class TokenAspect {
         String token = request.getHeader("token");
         if (StrUtil.isNotBlank(token)) {
             //获取到token，校验合法性
-            String id = TokenUtils.parseToken(token);
+            String id;
+            try {
+                id = TokenUtils.parseToken(token);
+            } catch (RuntimeException e) {
+                return ResponseResult.authFailed("token非法");
+            }
             String validToken = redisCache.getCacheObject("[OnlineUserToken]" + id);
             if (validToken.equals(token)) {
                 //token合法，获取用户
