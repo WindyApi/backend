@@ -7,10 +7,18 @@
             VALUE (#{name}, #{describe}, #{method}, #{url}, #{params}, #{requestHeader}, #{responseHeader}, #{userId});
     </insert>
 
-    <select id="selectIdAndNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderByStatusAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO">
+    <select id="selectCountByStatusAndIsDelete" resultType="java.lang.Long">
+        SELECT COUNT(id)
+        FROM windy_api.interface_info
+        WHERE status = 1 AND isDelete = 0;
+    </select>
+
+    <select id="selectIdAndNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderByPageNumAndStatusAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO">
         SELECT id, name, `describe`, method, url, params, requestHeader, responseHeader
         FROM windy_api.interface_info
         WHERE status = 1 AND isDelete = 0
+        ORDER BY id
+        LIMIT ${(pageNum - 1) * 10}, 10;
     </select>
 
     <update id="updateStatusById">

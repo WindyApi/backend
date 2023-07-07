@@ -1,8 +1,8 @@
 package top.whiteleaf03.api.service.interfaceinfo;
 
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
+import top.whiteleaf03.api.modal.dto.QueryAliveInterfaceByPageDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
-import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
@@ -36,9 +36,17 @@ public interface InterfaceInfoService {
     ResponseResult setStatus(UpdateInterfaceStatusDTO updateInterfaceStatusDTO);
 
     /**
-     * 查询活跃接口信息
+     * 获取分页总数
      *
      * @return 返回结果
      */
-    ResponseResult queryAliveInterface();
+    ResponseResult queryAliveInterfacePageSize();
+
+    /**
+     * 查询活跃接口信息
+     *
+     * @param queryAliveInterfaceByPageDTO 分页信息
+     * @return 返回结果
+     */
+    ResponseResult queryAliveInterfaceByPage(QueryAliveInterfaceByPageDTO queryAliveInterfaceByPageDTO);
 }
