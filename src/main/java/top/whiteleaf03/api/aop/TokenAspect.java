@@ -43,37 +43,40 @@ public class TokenAspect {
     public Object checkToken(ProceedingJoinPoint joinPoint, TokenCheck tokenCheck) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader("token");
-        if (StrUtil.isNotBlank(token)) {
-            //获取到token，校验合法性
-            String id;
-            try {
-                id = TokenUtils.parseToken(token);
-            } catch (RuntimeException e) {
-                return ResponseResult.authFailed("token非法");
-            }
-            String validToken = redisCache.getCacheObject("[OnlineUserToken]" + id);
-            if (StrUtil.isBlank(validToken)) {
-                return ResponseResult.authFailed("token已过期");
-            }
-            if (validToken.equals(token)) {
-                //token合法，获取用户
-                User user = redisCache.getCacheObject("[OnlineUserInfo]" + id);
-                if (ObjectUtil.isNotNull(user)) {
-                    RequestContextHolder.getRequestAttributes().setAttribute("UserInfo", user, RequestAttributes.SCOPE_REQUEST);
-                    //获取到用户，鉴权
-                    if (StrUtil.isNotBlank(tokenCheck.value())) {
-                        //对身份有要求
-                        if (tokenCheck.value().equals(user.getRole())) {
-                            //是管理员，放行
-                            return joinPoint.proceed();
-                        }
-                    } else {
-                        //对身份无要求
-                        return joinPoint.proceed();
-                    }
-                }
-            }
+
+        //token判空
+        if (StrUtil.isBlank(token)) {
+            return ResponseResult.authFailed("token为空");
         }
-        return ResponseResult.authFailed("Auth Failed");
+
+        //获取id
+        String id;
+        try {
+            id = TokenUtils.parseToken(token);
+        } catch (RuntimeException e) {
+            return ResponseResult.authFailed("token非法");
+        }
+
+        //判断是否过期
+        String validToken = redisCache.getCacheObject("[OnlineUserToken]" + id);
+        if (StrUtil.isBlank(validToken) || !validToken.equals(token)) {
+            return ResponseResult.authFailed("token已过期");
+        }
+
+        //判断用户是否存在
+        User user = redisCache.getCacheObject("[OnlineUserInfo]" + id);
+        if (ObjectUtil.isNull(user)) {
+            return ResponseResult.authFailed("用户不存在");
+        }
+
+        //鉴权
+        if (StrUtil.isNotBlank(tokenCheck.value()) && !tokenCheck.value().equals(user.getRole())) {
+            return ResponseResult.authFailed("无权限访问");
+        }
+
+        //检验通过 将用户信息存入上下文
+        RequestContextHolder.getRequestAttributes().setAttribute("UserInfo", user, RequestAttributes.SCOPE_REQUEST);
+
+        return joinPoint.proceed();
     }
 }
