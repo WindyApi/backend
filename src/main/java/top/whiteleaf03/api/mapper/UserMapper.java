@@ -23,4 +23,12 @@ public interface UserMapper {
      * @return 用户信息
      */
     User selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPasswordAndCreateTimeByAccount(String account);
+
+    /**
+     * 根据id获取用户昵称
+     *
+     * @param id 用户id
+     * @return 用户昵称
+     */
+    String selectNicknameById(Long id);
 }

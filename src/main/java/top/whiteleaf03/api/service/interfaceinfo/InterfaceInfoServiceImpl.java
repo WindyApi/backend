@@ -6,16 +6,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
+import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
-import top.whiteleaf03.api.modal.vo.AliveInterfacePageSizeVo;
+import top.whiteleaf03.api.modal.entity.InterfaceInfo;
+import top.whiteleaf03.api.modal.vo.PageSizeVO;
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
-import top.whiteleaf03.api.modal.dto.QueryAliveInterfaceByPageDTO;
+import top.whiteleaf03.api.modal.dto.PageNumDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
+import top.whiteleaf03.api.modal.vo.InterfaceInfoVO;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
 import top.whiteleaf03.api.util.ResponseResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +29,12 @@ import java.util.List;
 @Service
 public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     private final InterfaceInfoMapper interfaceInfoMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper) {
+    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper) {
         this.interfaceInfoMapper = interfaceInfoMapper;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -80,19 +86,19 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     public ResponseResult queryAliveInterfacePageSize() {
         Long total = interfaceInfoMapper.selectCountByStatusAndIsDelete();
         Long pageSize = (long) Math.ceil((double) total / 10);
-        AliveInterfacePageSizeVo aliveInterfacePageSizeVo = new AliveInterfacePageSizeVo(pageSize);
-        return ResponseResult.success(aliveInterfacePageSizeVo);
+        PageSizeVO pageSizeVO = new PageSizeVO(pageSize);
+        return ResponseResult.success(pageSizeVO);
     }
 
     /**
      * 查询活跃接口信息
      *
-     * @param queryAliveInterfaceByPageDTO 分页信息
+     * @param pageNumDTO 分页信息
      * @return 返回结果
      */
     @Override
-    public ResponseResult queryAliveInterfaceByPage(QueryAliveInterfaceByPageDTO queryAliveInterfaceByPageDTO) {
-        List<OnlineInterfaceInfoVO> onlineInterfaceInfoVOList = interfaceInfoMapper.selectIdAndNameAndDescribeByPageNumAndStatusAndIsDelete(queryAliveInterfaceByPageDTO);
+    public ResponseResult queryAliveInterfaceByPage(PageNumDTO pageNumDTO) {
+        List<OnlineInterfaceInfoVO> onlineInterfaceInfoVOList = interfaceInfoMapper.selectIdAndNameAndDescribeByPageNumAndStatusAndIsDelete(pageNumDTO);
         return ResponseResult.success(onlineInterfaceInfoVOList);
     }
 
@@ -106,5 +112,34 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     public ResponseResult queryInterfaceDocById(InterfaceIdDTO interfaceIdDTO) {
         InterfaceDocVO interfaceDocVO = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(interfaceIdDTO);
         return ResponseResult.success(interfaceDocVO);
+    }
+
+    /**
+     * 获取所有接口分页总数
+     *
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult queryAllInterfacePageSize() {
+        Long total = interfaceInfoMapper.selectCountByIsDelete();
+        Long pageSize = (long) Math.ceil((double) total / 10);
+        PageSizeVO pageSizeVO = new PageSizeVO(pageSize);
+        return ResponseResult.success(pageSizeVO);
+    }
+
+    /**
+     * 根据页号查询接口信息
+     *
+     * @param pageNumDTO 页号
+     * @return 返回接口信息
+     */
+    @Override
+    public ResponseResult queryAllInterfaceByPage(PageNumDTO pageNumDTO) {
+        List<InterfaceInfo> interfaceInfos = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(pageNumDTO);
+        List<InterfaceInfoVO> interfaceInfoVOs = new ArrayList<>();
+        for (InterfaceInfo interfaceInfo : interfaceInfos) {
+            interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getId())));
+        }
+        return ResponseResult.success(interfaceInfoVOs);
     }
 }

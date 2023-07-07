@@ -32,4 +32,19 @@
         SET status = #{status}
         WHERE id = #{id};
     </update>
+
+    <select id="selectCountByIsDelete" resultType="java.lang.Long">
+        SELECT COUNT(id)
+        FROM windy_api.interface_info
+        WHERE isDelete = false;
+    </select>
+
+    <select id="selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete"
+            resultType="top.whiteleaf03.api.modal.entity.InterfaceInfo">
+        SELECT id, name, `describe`, method, url, params, requestHeader, responseHeader, status, userId, createTime, updateTime
+        FROM windy_api.interface_info
+        WHERE isDelete = false
+        ORDER BY id
+        LIMIT ${(pageNum - 1) * 10}, 10;
+    </select>
 </mapper>

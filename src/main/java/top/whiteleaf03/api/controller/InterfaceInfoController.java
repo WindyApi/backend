@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import top.whiteleaf03.api.aop.TokenCheck;
 import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
-import top.whiteleaf03.api.modal.dto.QueryAliveInterfaceByPageDTO;
+import top.whiteleaf03.api.modal.dto.PageNumDTO;
 import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
 import top.whiteleaf03.api.service.interfaceinfo.InterfaceInfoService;
 import top.whiteleaf03.api.util.ResponseResult;
@@ -38,11 +38,11 @@ public class InterfaceInfoController {
 
     @TokenCheck("")
     @GetMapping("online")
-    public ResponseResult queryAliveInterfaceByPage(QueryAliveInterfaceByPageDTO queryAliveInterfaceByPageDTO) {
-        Integer pageNum = queryAliveInterfaceByPageDTO.getPageNum();
+    public ResponseResult queryAliveInterfaceByPage(PageNumDTO pageNumDTO) {
+        Integer pageNum = pageNumDTO.getPageNum();
         if (ObjectUtil.isNotNull(pageNum) && pageNum > 0) {
             //携带页号，返回指定分页的信息
-            return interfaceInfoService.queryAliveInterfaceByPage(queryAliveInterfaceByPageDTO);
+            return interfaceInfoService.queryAliveInterfaceByPage(pageNumDTO);
         }
         //未携带页号，返回分页数量
         return interfaceInfoService.queryAliveInterfacePageSize();
@@ -52,5 +52,17 @@ public class InterfaceInfoController {
     @GetMapping("")
     public ResponseResult queryInterfaceDoc(InterfaceIdDTO interfaceIdDTO) {
         return interfaceInfoService.queryInterfaceDocById(interfaceIdDTO);
+    }
+
+    @TokenCheck("admin")
+    @GetMapping("all")
+    public ResponseResult queryAllInterfaceByPage(PageNumDTO pageNumDTO) {
+        Integer pageNum = pageNumDTO.getPageNum();
+        if (ObjectUtil.isNotNull(pageNum) && pageNum > 0) {
+            //携带页号，返回指定分页的信息
+            return interfaceInfoService.queryAllInterfaceByPage(pageNumDTO);
+        }
+        //未携带页号，返回分页数量
+        return interfaceInfoService.queryAllInterfacePageSize();
     }
 }

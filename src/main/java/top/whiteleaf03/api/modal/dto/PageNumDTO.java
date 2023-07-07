@@ -1,4 +1,4 @@
-package top.whiteleaf03.api.modal.vo;
+package top.whiteleaf03.api.modal.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AliveInterfacePageSizeVo {
-    /**
-     * 活跃接口页数
-     */
-    private Long pageSize;
+public class PageNumDTO {
+    private Integer pageNum;
 }

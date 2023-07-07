@@ -13,4 +13,10 @@
         FROM windy_api.user
         WHERE account = #{account} AND isDelete = false;
     </select>
+
+    <select id="selectNicknameById" resultType="java.lang.String">
+        SELECT nickname
+        FROM windy_api.user
+        WHERE id = #{id};
+    </select>
 </mapper>
