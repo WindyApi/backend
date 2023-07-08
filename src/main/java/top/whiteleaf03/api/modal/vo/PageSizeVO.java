@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PageSizeVO {
     /**
-     * 活跃接口页数
+     * 分页条目总数
      */
-    private Long pageSize;
+    private Long total;
 }

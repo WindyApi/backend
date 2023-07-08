@@ -85,9 +85,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     @Override
     public ResponseResult queryAliveInterfacePageSize() {
         Long total = interfaceInfoMapper.selectCountByStatusAndIsDelete();
-        Long pageSize = (long) Math.ceil((double) total / 10);
-        PageSizeVO pageSizeVO = new PageSizeVO(pageSize);
-        return ResponseResult.success(pageSizeVO);
+        return ResponseResult.success(new PageSizeVO(total));
     }
 
     /**
@@ -122,9 +120,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     @Override
     public ResponseResult queryAllInterfacePageSize() {
         Long total = interfaceInfoMapper.selectCountByIsDelete();
-        Long pageSize = (long) Math.ceil((double) total / 10);
-        PageSizeVO pageSizeVO = new PageSizeVO(pageSize);
-        return ResponseResult.success(pageSizeVO);
+        return ResponseResult.success(new PageSizeVO(total));
     }
 
     /**
