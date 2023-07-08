@@ -134,7 +134,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         List<InterfaceInfo> interfaceInfos = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(pageNumDTO);
         List<InterfaceInfoVO> interfaceInfoVOs = new ArrayList<>();
         for (InterfaceInfo interfaceInfo : interfaceInfos) {
-            interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getId())));
+            interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getUserId())));
         }
         return ResponseResult.success(interfaceInfoVOs);
     }
