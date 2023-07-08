@@ -45,6 +45,6 @@
         FROM windy_api.interface_info
         WHERE isDelete = false
         ORDER BY id
-        LIMIT ${(pageNum - 1) * 10}, 10;
+        LIMIT ${(pageNum - 1) * 5}, 5;
     </select>
 </mapper>
