@@ -3,16 +3,14 @@ package top.whiteleaf03.api.service.interfaceinfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
-import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.InterfaceInfo;
 import top.whiteleaf03.api.modal.vo.PageSizeVO;
-import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
-import top.whiteleaf03.api.modal.dto.PageNumDTO;
-import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.InterfaceInfoVO;
@@ -137,5 +135,17 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
             interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getUserId())));
         }
         return ResponseResult.success(interfaceInfoVOs);
+    }
+
+    /**
+     * 修改接口信息
+     *
+     * @param updateInterfaceDTO 要修改的接口信息
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult updateInterfaceById(UpdateInterfaceDTO updateInterfaceDTO) {
+        interfaceInfoMapper.updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById(updateInterfaceDTO);
+        return ResponseResult.success();
     }
 }

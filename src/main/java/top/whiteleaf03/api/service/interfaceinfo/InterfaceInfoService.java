@@ -1,9 +1,6 @@
 package top.whiteleaf03.api.service.interfaceinfo;
 
-import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
-import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
-import top.whiteleaf03.api.modal.dto.PageNumDTO;
-import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
@@ -62,7 +59,6 @@ public interface InterfaceInfoService {
     /**
      * 获取所有接口分页总数
      *
-     * @param pageNumDTO 页号
      * @return 返回结果
      */
     ResponseResult queryAllInterfacePageSize();
@@ -74,4 +70,12 @@ public interface InterfaceInfoService {
      * @return 返回接口信息
      */
     ResponseResult queryAllInterfaceByPage(PageNumDTO pageNumDTO);
+
+    /**
+     * 修改接口信息
+     *
+     * @param updateInterfaceDTO 要修改的接口信息
+     * @return 返回结果
+     */
+    ResponseResult updateInterfaceById(UpdateInterfaceDTO updateInterfaceDTO);
 }

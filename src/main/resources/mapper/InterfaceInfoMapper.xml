@@ -47,4 +47,17 @@
         ORDER BY id
         LIMIT ${(pageNum - 1) * 5}, 5;
     </select>
+
+    <update id="updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById">
+        UPDATE windy_api.interface_info
+        <trim prefix="set" suffixOverrides="," suffix="where id = #{id}">
+            <if test="name != null">name = #{name},</if>
+            <if test="describe != null">`describe` = #{describe},</if>
+            <if test="method != null">method = #{method},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="params != null">params = #{params},</if>
+            <if test="requestHeader != null">requestHeader = #{requestHeader},</if>
+            <if test="responseHeader != null">responseHeader = #{responseHeader},</if>
+        </trim>
+    </update>
 </mapper>

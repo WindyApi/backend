@@ -1,10 +1,7 @@
 package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
-import top.whiteleaf03.api.modal.dto.NewInterfaceDTO;
-import top.whiteleaf03.api.modal.dto.PageNumDTO;
-import top.whiteleaf03.api.modal.dto.UpdateInterfaceStatusDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.InterfaceInfo;
 import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
@@ -67,4 +64,11 @@ public interface InterfaceInfoMapper {
      * @return 返回接口信息
      */
     List<InterfaceInfo> selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(PageNumDTO pageNumDTO);
+
+    /**
+     * 修改接口信息
+     *
+     * @param updateInterfaceDTO 要修改的接口信息
+     */
+    void updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById(UpdateInterfaceDTO updateInterfaceDTO);
 }
