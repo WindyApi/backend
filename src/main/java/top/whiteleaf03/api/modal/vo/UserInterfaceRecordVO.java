@@ -15,6 +15,11 @@ import java.util.Date;
 @NoArgsConstructor
 public class UserInterfaceRecordVO {
     /**
+     * 接口id
+     */
+    private Long interfaceId;
+
+    /**
      * 接口名称
      */
     private String interfaceName;
@@ -35,6 +40,7 @@ public class UserInterfaceRecordVO {
     private Date updateTime;
 
     public UserInterfaceRecordVO(UserInterfaceRecord userInterfaceRecord, String interfaceName) {
+        this.interfaceId = userInterfaceRecord.getInterfaceInfoId();
         this.interfaceName = interfaceName;
         this.totalNum = userInterfaceRecord.getTotalNum();
         this.leftNum = userInterfaceRecord.getLeftNum();
