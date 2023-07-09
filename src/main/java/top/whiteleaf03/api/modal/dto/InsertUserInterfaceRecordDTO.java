@@ -30,4 +30,11 @@ public class InsertUserInterfaceRecordDTO {
      * 剩余调用次数
      */
     private Integer leftNum;
+
+    public InsertUserInterfaceRecordDTO(UserSubscribeDTO userSubscribeDTO) {
+        this.userId = userSubscribeDTO.getUserId();
+        this.interfaceInfoId = userSubscribeDTO.getInterfaceInfoId();
+        this.totalNum = userSubscribeDTO.getIncrease();
+        this.leftNum = userSubscribeDTO.getIncrease();
+    }
 }

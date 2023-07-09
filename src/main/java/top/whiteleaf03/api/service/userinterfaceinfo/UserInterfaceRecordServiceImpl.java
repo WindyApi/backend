@@ -1,5 +1,6 @@
 package top.whiteleaf03.api.service.userinterfaceinfo;
 
+import cn.hutool.core.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,8 @@ import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.mapper.UserInterfaceRecordMapper;
 import top.whiteleaf03.api.modal.dto.InsertUserInterfaceRecordDTO;
 import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
+import top.whiteleaf03.api.modal.dto.UserIdAndInterfaceIdDTO;
+import top.whiteleaf03.api.modal.dto.UserSubscribeDTO;
 import top.whiteleaf03.api.modal.entity.InterfaceInfo;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.entity.UserInterfaceRecord;
@@ -18,6 +21,7 @@ import top.whiteleaf03.api.util.ResponseResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author WhiteLeaf03
@@ -61,5 +65,23 @@ public class UserInterfaceRecordServiceImpl implements UserInterfaceRecordServic
             userInterfaceRecordVOs.add(new UserInterfaceRecordVO(userInterfaceRecord, interfaceName));
         }
         return ResponseResult.success(userInterfaceRecordVOs);
+    }
+
+    /**
+     * 增加可调用次数
+     *
+     * @param userSubscribeDTO 包含用户id 接口id 新增次数
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult increaseTotalNum(UserSubscribeDTO userSubscribeDTO) {
+        if (ObjectUtil.isNotNull(userInterfaceRecordMapper.selectInterfaceInfoIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(userSubscribeDTO.getUserId()))) {
+            //用户未开通过 增加记录
+            userInterfaceRecordMapper.insert(new InsertUserInterfaceRecordDTO(userSubscribeDTO));
+        } else {
+            //用户考通过 增加次数
+            userInterfaceRecordMapper.increase(userSubscribeDTO);
+        }
+        return ResponseResult.success();
     }
 }

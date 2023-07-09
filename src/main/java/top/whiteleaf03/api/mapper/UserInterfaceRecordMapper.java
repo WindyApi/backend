@@ -2,6 +2,7 @@ package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import top.whiteleaf03.api.modal.dto.InsertUserInterfaceRecordDTO;
+import top.whiteleaf03.api.modal.dto.UserSubscribeDTO;
 import top.whiteleaf03.api.modal.entity.UserInterfaceRecord;
 
 import java.util.List;
@@ -25,4 +26,11 @@ public interface UserInterfaceRecordMapper {
      * @return 返回结果
      */
     List<UserInterfaceRecord> selectInterfaceInfoIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(Long userId);
+
+    /**
+     * 增加用户调用次数
+     *
+     * @param UserSubscribeDTO 用户id和接口id
+     */
+    void increase(UserSubscribeDTO UserSubscribeDTO);
 }

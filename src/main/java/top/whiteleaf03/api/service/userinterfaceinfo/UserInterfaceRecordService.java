@@ -1,6 +1,7 @@
 package top.whiteleaf03.api.service.userinterfaceinfo;
 
 import top.whiteleaf03.api.modal.dto.InsertUserInterfaceRecordDTO;
+import top.whiteleaf03.api.modal.dto.UserSubscribeDTO;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
@@ -21,4 +22,12 @@ public interface UserInterfaceRecordService {
      * @return 返回结果
      */
     ResponseResult queryByUserId();
+
+    /**
+     * 增加可调用次数
+     *
+     * @param userSubscribeDTO 包含用户id 接口id 新增次数
+     * @return 返回结果
+     */
+    ResponseResult increaseTotalNum(UserSubscribeDTO userSubscribeDTO);
 }

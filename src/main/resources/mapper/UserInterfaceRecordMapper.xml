@@ -12,4 +12,10 @@
         FROM windy_api.user_interface_record
         WHERE userId = #{userId};
     </select>
+
+    <update id="increase">
+        UPDATE windy_api.user_interface_record
+        SET totalNum = totalNum + #{increase}
+        WHERE userId = #{userId} AND interfaceInfoId = #{interfaceInfoId};
+    </update>
 </mapper>

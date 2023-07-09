@@ -57,3 +57,15 @@ create table if not exists user_interface_record
     `isDelete`        tinyint    default 0                 not null comment '是否删除(0-未删, 1-已删)'
 )
     comment '用户调用接口记录' charset utf8;
+
+drop table if exists user_subscribe_record;
+create table user_subscribe_record
+(
+    `id`              bigint                             not null auto_increment comment '主键' primary key,
+    `userId`          bigint                             not null comment '调用用户 id',
+    `interfaceInfoId` bigint                             not null comment '接口 id',
+    `increase`        int                                not null comment '增加的次数',
+    `price`           int                                not null comment '价格',
+    `createTime`      datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+)
+    comment '用户订阅记录' charset utf8;
