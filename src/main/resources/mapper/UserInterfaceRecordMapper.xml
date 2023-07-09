@@ -3,12 +3,12 @@
 
 <mapper namespace="top.whiteleaf03.api.mapper.UserInterfaceRecordMapper">
     <insert id="insert">
-        INSERT INTO windy_api.user_interface_record (userId, interfaceInfoId, totalNum, leftNum)
-            VALUE (#{userId}, #{interfaceInfoId}, #{totalNum}, #{leftNum});
+        INSERT INTO windy_api.user_interface_record (userId, interfaceId, totalNum, leftNum)
+            VALUE (#{userId}, #{interfaceId}, #{totalNum}, #{leftNum});
     </insert>
 
-    <select id="selectInterfaceInfoIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime" resultType="top.whiteleaf03.api.modal.entity.UserInterfaceRecord">
-        SELECT interfaceInfoId, totalNum, leftNum, updateTime
+    <select id="selectInterfaceIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime" resultType="top.whiteleaf03.api.modal.entity.UserInterfaceRecord">
+        SELECT interfaceId, totalNum, leftNum, updateTime
         FROM windy_api.user_interface_record
         WHERE userId = #{userId};
     </select>
@@ -16,12 +16,12 @@
     <update id="increase">
         UPDATE windy_api.user_interface_record
         SET totalNum = totalNum + #{increase}, leftNum = leftNum + #{increase}
-        WHERE userId = #{userId} AND interfaceInfoId = #{interfaceInfoId};
+        WHERE userId = #{userId} AND interfaceId = #{interfaceId};
     </update>
 
-    <select id="selectIdByUserIdAndInterfaceInfoId" resultType="java.lang.Long">
+    <select id="selectIdByUserIdAndInterfaceId" resultType="java.lang.Long">
         SELECT id
         FROM windy_api.user_interface_record
-        WHERE userId = #{userId} AND interfaceInfoId = #{interfaceInfoId};
+        WHERE userId = #{userId} AND interfaceId = #{interfaceId};
     </select>
 </mapper>

@@ -26,19 +26,20 @@ public interface UserInterfaceRecordMapper {
      * @param userId 用户id
      * @return 返回结果
      */
-    List<UserInterfaceRecord> selectInterfaceInfoIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(Long userId);
+    List<UserInterfaceRecord> selectInterfaceIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(Long userId);
 
     /**
      * 增加用户调用次数
      *
-     * @param UserSubscribeDTO 用户id和接口id
+     * @param userSubscribeDTO 用户id和接口id
      */
-    void increase(UserSubscribeDTO UserSubscribeDTO);
+    void increase(UserSubscribeDTO userSubscribeDTO);
 
     /**
      * 根据用户id和接口id查询用户是否开通过
      *
      * @param userIdAndInterfaceIdDTO 用户id和接口id
+     * @return 返回结果
      */
-    Long selectIdByUserIdAndInterfaceInfoId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
+    Long selectIdByUserIdAndInterfaceId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
 }

@@ -57,9 +57,9 @@ public class UserInterfaceRecordServiceImpl implements UserInterfaceRecordServic
     public ResponseResult queryByUserId() {
         User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
         List<UserInterfaceRecordVO> userInterfaceRecordVOs = new ArrayList<>();
-        List<UserInterfaceRecord> userInterfaceRecords = userInterfaceRecordMapper.selectInterfaceInfoIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(user.getId());
+        List<UserInterfaceRecord> userInterfaceRecords = userInterfaceRecordMapper.selectInterfaceIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(user.getId());
         for (UserInterfaceRecord userInterfaceRecord : userInterfaceRecords) {
-            String interfaceName = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(new InterfaceIdDTO(userInterfaceRecord.getInterfaceInfoId())).getName();
+            String interfaceName = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(new InterfaceIdDTO(userInterfaceRecord.getInterfaceId())).getName();
             userInterfaceRecordVOs.add(new UserInterfaceRecordVO(userInterfaceRecord, interfaceName));
         }
         return ResponseResult.success(userInterfaceRecordVOs);
@@ -73,7 +73,7 @@ public class UserInterfaceRecordServiceImpl implements UserInterfaceRecordServic
      */
     @Override
     public ResponseResult increaseTotalNum(UserSubscribeDTO userSubscribeDTO) {
-        Long id = userInterfaceRecordMapper.selectIdByUserIdAndInterfaceInfoId(new UserIdAndInterfaceIdDTO(userSubscribeDTO.getUserId(), userSubscribeDTO.getInterfaceInfoId()));
+        Long id = userInterfaceRecordMapper.selectIdByUserIdAndInterfaceId(new UserIdAndInterfaceIdDTO(userSubscribeDTO.getUserId(), userSubscribeDTO.getInterfaceId()));
         log.info(String.valueOf(id));
         if (Objects.isNull(id)) {
             //用户未开通过 增加记录

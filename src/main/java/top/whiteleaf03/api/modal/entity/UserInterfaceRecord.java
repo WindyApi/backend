@@ -26,7 +26,7 @@ public class UserInterfaceRecord {
     /**
      * 接口 ID
      */
-    private Long interfaceInfoId;
+    private Long interfaceId;
 
     /**
      * 总调用次数

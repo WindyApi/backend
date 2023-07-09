@@ -40,7 +40,7 @@ public class UserInterfaceRecordVO {
     private Date updateTime;
 
     public UserInterfaceRecordVO(UserInterfaceRecord userInterfaceRecord, String interfaceName) {
-        this.interfaceId = userInterfaceRecord.getInterfaceInfoId();
+        this.interfaceId = userInterfaceRecord.getInterfaceId();
         this.interfaceName = interfaceName;
         this.totalNum = userInterfaceRecord.getTotalNum();
         this.leftNum = userInterfaceRecord.getLeftNum();

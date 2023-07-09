@@ -19,7 +19,7 @@ public class UserSubscribeDTO {
     /**
      * 接口id
      */
-    private Long interfaceInfoId;
+    private Long interfaceId;
 
     /**
      * 新增次数

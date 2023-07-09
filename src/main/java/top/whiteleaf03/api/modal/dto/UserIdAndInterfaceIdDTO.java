@@ -19,9 +19,9 @@ public class UserIdAndInterfaceIdDTO {
     /**
      * 接口id
      */
-    private Long interfaceInfoId;
+    private Long interfaceId;
 
-    public UserIdAndInterfaceIdDTO(Long interfaceInfoId) {
-        this.interfaceInfoId = interfaceInfoId;
+    public UserIdAndInterfaceIdDTO(Long interfaceId) {
+        this.interfaceId = interfaceId;
     }
 }

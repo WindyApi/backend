@@ -25,5 +25,5 @@ public interface UserSubscribeRecordMapper {
      * @param userIdAndInterfaceIdDTO (可选) 用户id和接口id
      * @return 返回结果
      */
-    List<UserSubscribeRecord> selectUserIdAndInterfaceInfoIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceInfoId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
+    List<UserSubscribeRecord> selectUserIdAndInterfaceIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
 }

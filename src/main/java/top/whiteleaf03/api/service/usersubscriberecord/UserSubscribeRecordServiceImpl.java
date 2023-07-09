@@ -56,7 +56,7 @@ public class UserSubscribeRecordServiceImpl implements UserSubscribeRecordServic
     public ResponseResult queryRecord(InterfaceIdDTO interfaceIdDTO) {
         User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
         UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO = new UserIdAndInterfaceIdDTO(user.getId(), interfaceIdDTO.getId());
-        List<UserSubscribeRecord> userSubscribeRecords = userSubscribeRecordMapper.selectUserIdAndInterfaceInfoIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceInfoId(userIdAndInterfaceIdDTO);
+        List<UserSubscribeRecord> userSubscribeRecords = userSubscribeRecordMapper.selectUserIdAndInterfaceIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceId(userIdAndInterfaceIdDTO);
         return ResponseResult.success(userSubscribeRecords);
     }
 
@@ -69,7 +69,7 @@ public class UserSubscribeRecordServiceImpl implements UserSubscribeRecordServic
     @Override
     public ResponseResult queryAllUserRecord(InterfaceIdDTO interfaceIdDTO) {
         UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO = new UserIdAndInterfaceIdDTO(interfaceIdDTO.getId());
-        List<UserSubscribeRecord> userSubscribeRecords = userSubscribeRecordMapper.selectUserIdAndInterfaceInfoIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceInfoId(userIdAndInterfaceIdDTO);
+        List<UserSubscribeRecord> userSubscribeRecords = userSubscribeRecordMapper.selectUserIdAndInterfaceIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceId(userIdAndInterfaceIdDTO);
         return ResponseResult.success(userSubscribeRecords);
     }
 }

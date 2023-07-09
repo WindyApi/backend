@@ -26,7 +26,7 @@ public class UserSubscribeRecord {
     /**
      * 接口id
      */
-    private Long interfaceInfoId;
+    private Long interfaceId;
 
     /**
      * 增加次数

@@ -19,7 +19,7 @@ public class InsertUserInterfaceRecordDTO {
     /**
      * 接口 ID
      */
-    private Long interfaceInfoId;
+    private Long interfaceId;
 
     /**
      * 总调用次数
@@ -33,7 +33,7 @@ public class InsertUserInterfaceRecordDTO {
 
     public InsertUserInterfaceRecordDTO(UserSubscribeDTO userSubscribeDTO) {
         this.userId = userSubscribeDTO.getUserId();
-        this.interfaceInfoId = userSubscribeDTO.getInterfaceInfoId();
+        this.interfaceId = userSubscribeDTO.getInterfaceId();
         this.totalNum = userSubscribeDTO.getIncrease();
         this.leftNum = userSubscribeDTO.getIncrease();
     }

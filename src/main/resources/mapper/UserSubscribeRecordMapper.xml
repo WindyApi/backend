@@ -3,17 +3,17 @@
 
 <mapper namespace="top.whiteleaf03.api.mapper.UserSubscribeRecordMapper">
     <insert id="insert">
-        INSERT INTO windy_api.user_subscribe_record (userId, interfaceInfoId, increase, price)
-            VALUE (#{userId}, #{interfaceInfoId}, #{increase}, #{price});
+        INSERT INTO windy_api.user_subscribe_record (userId, interfaceId, increase, price)
+            VALUE (#{userId}, #{interfaceId}, #{increase}, #{price});
     </insert>
 
-    <select id="selectUserIdAndInterfaceInfoIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceInfoId"
+    <select id="selectUserIdAndInterfaceIdAndIncreaseAndPriceAndCreateTimeByUserIdOrInterfaceId"
             resultType="top.whiteleaf03.api.modal.entity.UserSubscribeRecord">
-        SELECT userId, interfaceInfoId, increase, price, createTime
+        SELECT userId, interfaceId, increase, price, createTime
         FROM windy_api.user_subscribe_record
         <trim prefixOverrides="WHERE" suffixOverrides="AND">
             <if test="userId != null">userId = #{userId} AND</if>
-            <if test="interfaceInfoId != null">interfaceInfoId = #{interfaceInfoId} AND</if>
+            <if test="interfaceId != null">interfaceId = #{interfaceId} AND</if>
         </trim>
     </select>
 </mapper>
