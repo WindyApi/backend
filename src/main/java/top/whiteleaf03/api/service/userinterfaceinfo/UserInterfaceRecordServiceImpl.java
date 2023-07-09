@@ -12,10 +12,8 @@ import top.whiteleaf03.api.modal.dto.InsertUserInterfaceRecordDTO;
 import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.UserIdAndInterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.UserSubscribeDTO;
-import top.whiteleaf03.api.modal.entity.InterfaceInfo;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.entity.UserInterfaceRecord;
-import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.UserInterfaceRecordVO;
 import top.whiteleaf03.api.util.ResponseResult;
 
@@ -75,11 +73,13 @@ public class UserInterfaceRecordServiceImpl implements UserInterfaceRecordServic
      */
     @Override
     public ResponseResult increaseTotalNum(UserSubscribeDTO userSubscribeDTO) {
-        if (ObjectUtil.isNotNull(userInterfaceRecordMapper.selectInterfaceInfoIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(userSubscribeDTO.getUserId()))) {
+        Long id = userInterfaceRecordMapper.selectIdByUserIdAndInterfaceInfoId(new UserIdAndInterfaceIdDTO(userSubscribeDTO.getUserId(), userSubscribeDTO.getInterfaceInfoId()));
+        log.info(String.valueOf(id));
+        if (Objects.isNull(id)) {
             //用户未开通过 增加记录
             userInterfaceRecordMapper.insert(new InsertUserInterfaceRecordDTO(userSubscribeDTO));
         } else {
-            //用户考通过 增加次数
+            //用户已开通过 增加次数
             userInterfaceRecordMapper.increase(userSubscribeDTO);
         }
         return ResponseResult.success();

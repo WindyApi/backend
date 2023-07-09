@@ -15,7 +15,13 @@
 
     <update id="increase">
         UPDATE windy_api.user_interface_record
-        SET totalNum = totalNum + #{increase}
+        SET totalNum = totalNum + #{increase}, leftNum = leftNum + #{increase}
         WHERE userId = #{userId} AND interfaceInfoId = #{interfaceInfoId};
     </update>
+
+    <select id="selectIdByUserIdAndInterfaceInfoId" resultType="java.lang.Long">
+        SELECT id
+        FROM windy_api.user_interface_record
+        WHERE userId = #{userId} AND interfaceInfoId = #{interfaceInfoId};
+    </select>
 </mapper>

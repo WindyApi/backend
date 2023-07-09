@@ -2,6 +2,7 @@ package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import top.whiteleaf03.api.modal.dto.InsertUserInterfaceRecordDTO;
+import top.whiteleaf03.api.modal.dto.UserIdAndInterfaceIdDTO;
 import top.whiteleaf03.api.modal.dto.UserSubscribeDTO;
 import top.whiteleaf03.api.modal.entity.UserInterfaceRecord;
 
@@ -33,4 +34,11 @@ public interface UserInterfaceRecordMapper {
      * @param UserSubscribeDTO 用户id和接口id
      */
     void increase(UserSubscribeDTO UserSubscribeDTO);
+
+    /**
+     * 根据用户id和接口id查询用户是否开通过
+     *
+     * @param userIdAndInterfaceIdDTO 用户id和接口id
+     */
+    Long selectIdByUserIdAndInterfaceInfoId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
 }
