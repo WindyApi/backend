@@ -14,6 +14,7 @@ create table user
     gender     tinyint                                null comment '性别',
     role       varchar(256) default 'user'            not null comment '用户角色：user / admin',
     password   varchar(512)                           not null comment '密码',
+    email      varchar(256)                           not null comment '邮箱',
     accessKey  varchar(512)                           not null comment 'accessKey',
     secretKey  varchar(512)                           not null comment 'secretKey',
     createTime datetime     default CURRENT_TIMESTAMP not null comment '创建时间',

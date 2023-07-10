@@ -37,6 +37,12 @@ public class RegisterDTO {
     private String password;
 
     /**
+     * 邮箱
+     */
+    @NonNull
+    private String email;
+
+    /**
      * accessKey
      */
     private String accessKey;

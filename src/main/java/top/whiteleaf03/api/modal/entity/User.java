@@ -52,6 +52,11 @@ public class User {
     private String password;
 
     /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
      * accessKey
      */
     private String accessKey;
