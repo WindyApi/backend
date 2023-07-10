@@ -43,6 +43,16 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResponseResult register(RegisterDTO registerDTO) {
+        //验证码校验
+        String code = redisCache.getCacheObject("[Captcha]" + registerDTO.getIdentity());
+        redisCache.deleteObject("[Captcha]" + registerDTO.getIdentity());
+        if (Objects.isNull(code)) {
+            return ResponseResult.error("验证码不存在");
+        }
+        if (!code.equals(registerDTO.getCaptcha())) {
+            return ResponseResult.error("验证码错误");
+        }
+
         //对密码进行加密
         registerDTO.setPassword(DigestUtil.bcrypt(registerDTO.getPassword()));
 
@@ -66,6 +76,16 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResponseResult login(LoginDTO loginDTO) {
+        //验证码校验
+        String code = redisCache.getCacheObject("[Captcha]" + loginDTO.getIdentity());
+        redisCache.deleteObject("[Captcha]" + loginDTO.getIdentity());
+        if (Objects.isNull(code)) {
+            return ResponseResult.error("验证码不存在");
+        }
+        if (!code.equals(loginDTO.getCaptcha())) {
+            return ResponseResult.error("验证码错误");
+        }
+
         //根据账号查询用户
         User user = userMapper.selectIdAndNicknameAndAvatarAndGenderAndRoleAndPasswordAndPasswordAndCreateTimeByAccount(loginDTO.getAccount());
 

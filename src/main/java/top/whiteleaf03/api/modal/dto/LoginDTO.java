@@ -23,4 +23,14 @@ public class LoginDTO {
      */
     @NonNull
     private String password;
+
+    /**
+     * 身份码
+     */
+    private String identity;
+
+    /**
+     * 验证码
+     */
+    private String captcha;
 }

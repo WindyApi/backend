@@ -51,4 +51,14 @@ public class RegisterDTO {
      * secretKey
      */
     private String secretKey;
+
+    /**
+     * 身份码
+     */
+    private String identity;
+
+    /**
+     * 验证码
+     */
+    private String captcha;
 }
