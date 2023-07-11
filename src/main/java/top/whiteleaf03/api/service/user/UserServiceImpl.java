@@ -1,21 +1,21 @@
 package top.whiteleaf03.api.service.user;
 
 import cn.hutool.crypto.digest.DigestUtil;
-import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.whiteleaf03.api.config.GlobalConfig;
 import top.whiteleaf03.api.mapper.UserMapper;
+import top.whiteleaf03.api.modal.dto.EmailInfoDTO;
 import top.whiteleaf03.api.modal.dto.LoginDTO;
 import top.whiteleaf03.api.modal.dto.RegisterDTO;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.LoginVO;
 import top.whiteleaf03.api.modal.vo.RegisterVO;
+import top.whiteleaf03.api.service.email.EmailService;
 import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
 import top.whiteleaf03.api.util.TokenUtils;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +27,14 @@ public class UserServiceImpl implements UserService {
     private final GlobalConfig globalConfig;
     private final UserMapper userMapper;
     private final RedisCache redisCache;
+    private final EmailService emailService;
 
     @Autowired
-    public UserServiceImpl(GlobalConfig globalConfig, UserMapper userMapper, RedisCache redisCache) {
+    public UserServiceImpl(GlobalConfig globalConfig, UserMapper userMapper, RedisCache redisCache, EmailService emailService) {
         this.globalConfig = globalConfig;
         this.userMapper = userMapper;
         this.redisCache = redisCache;
+        this.emailService = emailService;
     }
 
     /**
@@ -61,6 +63,9 @@ public class UserServiceImpl implements UserService {
         String secretKey = DigestUtil.sha256Hex(globalConfig.getSalt() + registerDTO.getPassword());
         registerDTO.setAccessKey(accessKey);
         registerDTO.setSecretKey(secretKey);
+
+        //发送accessKey和secretKey给用户注册的邮箱
+        emailService.sentEmail(new EmailInfoDTO(registerDTO.getEmail(), "欢迎新用户", "请妥善保管好您的密钥!\n[accessKey]" + accessKey + "\n[secretKey]" + secretKey));
 
         //将用户信息插入数据库
         userMapper.insert(registerDTO);
