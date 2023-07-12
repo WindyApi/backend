@@ -2,11 +2,17 @@ package top.whiteleaf03.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import top.whiteleaf03.api.aop.TokenCheck;
+import top.whiteleaf03.api.modal.dto.EditPasswordDTO;
+import top.whiteleaf03.api.modal.dto.EditUserInfoDTO;
 import top.whiteleaf03.api.modal.dto.LoginDTO;
 import top.whiteleaf03.api.modal.dto.RegisterDTO;
 import top.whiteleaf03.api.service.captcha.CaptchaService;
 import top.whiteleaf03.api.service.user.UserService;
 import top.whiteleaf03.api.util.ResponseResult;
+
+import java.io.IOException;
 
 /**
  * @author WhiteLeaf03
@@ -36,5 +42,35 @@ public class UserController {
     @GetMapping("captcha")
     public ResponseResult getCaptcha() {
         return captchaService.getCaptcha();
+    }
+
+    @TokenCheck("")
+    @PostMapping("avatar")
+    public ResponseResult editAvatar(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        return userService.editAvatar(multipartFile);
+    }
+
+    @TokenCheck("")
+    @GetMapping("verify")
+    public ResponseResult getVerifyCodeByEmail() {
+        return userService.getVerifyCodeByEmail();
+    }
+
+    @TokenCheck("")
+    @PutMapping("info")
+    public ResponseResult editUserInfo(@RequestBody EditUserInfoDTO editUserInfoDTO) {
+        return userService.editUserInfo(editUserInfoDTO);
+    }
+
+    @TokenCheck("")
+    @GetMapping("resetKey")
+    public ResponseResult resetAccessKeyAndSecretKey() {
+        return userService.resetAccessKeyAndSecretKey();
+    }
+
+    @TokenCheck("")
+    @PutMapping("password")
+    public ResponseResult editPassword(@RequestBody EditPasswordDTO editPasswordDTO) {
+        return userService.editPassword(editPasswordDTO);
     }
 }

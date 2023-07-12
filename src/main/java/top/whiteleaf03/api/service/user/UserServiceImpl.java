@@ -1,13 +1,23 @@
 package top.whiteleaf03.api.service.user;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import cn.hutool.http.HttpRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 import top.whiteleaf03.api.config.GlobalConfig;
 import top.whiteleaf03.api.mapper.UserMapper;
-import top.whiteleaf03.api.modal.dto.EmailInfoDTO;
-import top.whiteleaf03.api.modal.dto.LoginDTO;
-import top.whiteleaf03.api.modal.dto.RegisterDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.LoginVO;
 import top.whiteleaf03.api.modal.vo.RegisterVO;
@@ -16,12 +26,20 @@ import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
 import top.whiteleaf03.api.util.TokenUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author WhiteLeaf03
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     private final GlobalConfig globalConfig;
@@ -113,5 +131,111 @@ public class UserServiceImpl implements UserService {
             //密码错误
             return ResponseResult.authFailed("密码错误");
         }
+    }
+
+    /**
+     * 用户修改头像
+     *
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult editAvatar(MultipartFile multipartFile) throws IOException {
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+
+        Map<String, String> headers = new HashMap<String, String>() {{
+            put("Content-Type", "multipart/form-data");
+            put("Authorization", "AevGYHT5j3p1CR7bLH8MDznfLA10CEMZ");
+            put("User-Agent", "java");
+        }};
+        HttpRequest request = HttpRequest.post("https://sm.ms/api/v2/upload")
+                .addHeaders(headers);
+
+        File convFile = new File(multipartFile.getOriginalFilename());
+        convFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(multipartFile.getBytes());
+        fos.close();
+        request.form("smfile", convFile, multipartFile.getOriginalFilename());
+        String result = request.execute().body();
+        System.out.println(result);
+
+        String regex = "\"url\":\"(https?:\\\\/\\\\/[^\"]*)\"";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(result);
+        String url;
+        if (matcher.find()) {
+            url = matcher.group(1);
+        } else {
+            return ResponseResult.error();
+        }
+        url = url.replace("\\", "");
+        System.out.println(url);
+        userMapper.updateAvatarById(new UpdateAvatarDTO(user.getId(), url));
+        return ResponseResult.success(url);
+    }
+
+    /**
+     * 通过邮箱获取验证码
+     *
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult getVerifyCodeByEmail() {
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+        String email = userMapper.selectEmailById(user.getId());
+        String verifyCode = RandomUtil.randomNumbers(6);
+        redisCache.setCacheObject("[VerifyCode]" + user.getId(), verifyCode, 5, TimeUnit.HOURS);
+        emailService.sentEmail(new EmailInfoDTO(email, "重置密钥", "您的验证码为:" + verifyCode + "\n5分钟内有效"));
+        return ResponseResult.success();
+    }
+
+    /**
+     * 用户修改个人信息
+     *
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult editUserInfo(EditUserInfoDTO editUserInfoDTO) {
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+        String verifyCode = redisCache.getCacheObject("[VerifyCode]" + user.getId());
+        if (ObjectUtil.isNotNull(verifyCode) && verifyCode.equals(editUserInfoDTO.getVerifyCode())) {
+            editUserInfoDTO.setId(user.getId());
+            userMapper.updateNicknameOrGenderOrEmailById(editUserInfoDTO);
+            return ResponseResult.success("");
+        }
+        return ResponseResult.error("验证码错误");
+    }
+
+    /**
+     * 用户重置ak和sk
+     *
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult resetAccessKeyAndSecretKey() {
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+        String accessKey = DigestUtil.sha1Hex(globalConfig.getSalt() + RandomUtil.randomString(12));
+        String secretKey = DigestUtil.sha256Hex(globalConfig.getSalt() + RandomUtil.randomString(12));
+        String email = userMapper.selectEmailById(user.getId());
+        emailService.sentEmail(new EmailInfoDTO(email, "重置密钥", "您的新密钥，请妥善保管!\n[accessKey]" + accessKey + "\n[secretKey]" + secretKey));
+        return ResponseResult.success();
+    }
+
+    /**
+     * 用户修改密码
+     *
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult editPassword(EditPasswordDTO editPasswordDTO) {
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+        String verifyCode = redisCache.getCacheObject("[VerifyCode]" + user.getId());
+        if (ObjectUtil.isNotNull(verifyCode) && verifyCode.equals(editPasswordDTO.getVerifyCode())) {
+            editPasswordDTO.setId(user.getId());
+            editPasswordDTO.setNewPassword(DigestUtil.bcrypt(editPasswordDTO.getNewPassword()));
+            userMapper.updatePasswordById(editPasswordDTO);
+            return ResponseResult.success();
+        }
+        return ResponseResult.error("验证码错误");
     }
 }

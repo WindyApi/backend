@@ -19,4 +19,32 @@
         FROM windy_api.user
         WHERE id = #{id};
     </select>
+
+    <update id="updateAvatarById">
+        UPDATE windy_api.user
+        SET avatar = #{avatar}
+        WHERE id = #{id};
+    </update>
+
+    <select id="selectEmailById" resultType="java.lang.String">
+        SELECT email
+        FROM windy_api.user
+        WHERE id = #{id};
+    </select>
+
+    <update id="updatePasswordById">
+        UPDATE windy_api.user
+        SET password = #{newPassword}
+        WHERE id = #{id};
+    </update>
+
+    <update id="updateNicknameOrGenderOrEmailById">
+        UPDATE windy_api.user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="nickname != null || nickname == ''">nickname = #{nickname},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="email != null || email == ''">email = #{email},</if>
+        </trim>
+        WHERE id = #{id};
+    </update>
 </mapper>
