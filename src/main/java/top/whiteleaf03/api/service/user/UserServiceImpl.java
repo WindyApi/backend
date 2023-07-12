@@ -141,7 +141,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseResult editAvatar(MultipartFile multipartFile) throws IOException {
         User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
-
         Map<String, String> headers = new HashMap<String, String>() {{
             put("Content-Type", "multipart/form-data");
             put("Authorization", "AevGYHT5j3p1CR7bLH8MDznfLA10CEMZ");
@@ -149,7 +148,6 @@ public class UserServiceImpl implements UserService {
         }};
         HttpRequest request = HttpRequest.post("https://sm.ms/api/v2/upload")
                 .addHeaders(headers);
-
         File convFile = new File(multipartFile.getOriginalFilename());
         convFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(convFile);
@@ -157,8 +155,6 @@ public class UserServiceImpl implements UserService {
         fos.close();
         request.form("smfile", convFile, multipartFile.getOriginalFilename());
         String result = request.execute().body();
-        System.out.println(result);
-
         String regex = "\"url\":\"(https?:\\\\/\\\\/[^\"]*)\"";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(result);
@@ -169,7 +165,6 @@ public class UserServiceImpl implements UserService {
             return ResponseResult.error();
         }
         url = url.replace("\\", "");
-        System.out.println(url);
         userMapper.updateAvatarById(new UpdateAvatarDTO(user.getId(), url));
         return ResponseResult.success(url);
     }
