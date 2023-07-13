@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.whiteleaf03.api.aop.TokenCheck;
-import top.whiteleaf03.api.modal.dto.EditPasswordDTO;
-import top.whiteleaf03.api.modal.dto.EditUserInfoDTO;
-import top.whiteleaf03.api.modal.dto.LoginDTO;
-import top.whiteleaf03.api.modal.dto.RegisterDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.service.captcha.CaptchaService;
 import top.whiteleaf03.api.service.user.UserService;
 import top.whiteleaf03.api.util.ResponseResult;
@@ -72,5 +69,15 @@ public class UserController {
     @PutMapping("password")
     public ResponseResult editPassword(@RequestBody EditPasswordDTO editPasswordDTO) {
         return userService.editPassword(editPasswordDTO);
+    }
+
+    @GetMapping("forget")
+    public ResponseResult getVerifyCode(GetVerifyCodeByAccount getVerifyCodeByAccount) {
+        return userService.getVerifyCode(getVerifyCodeByAccount);
+    }
+
+    @PutMapping("forget")
+    public ResponseResult resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
+        return userService.resetPassword(resetPasswordDTO);
     }
 }

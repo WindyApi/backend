@@ -47,4 +47,10 @@
         </trim>
         WHERE id = #{id};
     </update>
+
+    <select id="selectIdAndEmailByAccount" resultType="top.whiteleaf03.api.modal.vo.UserIdAndEmailVO">
+        SELECT id, email
+        FROM windy_api.user
+        WHERE account = #{account};
+    </select>
 </mapper>

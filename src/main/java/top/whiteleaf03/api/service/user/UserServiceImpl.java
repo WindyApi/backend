@@ -21,6 +21,7 @@ import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.LoginVO;
 import top.whiteleaf03.api.modal.vo.RegisterVO;
+import top.whiteleaf03.api.modal.vo.UserIdAndEmailVO;
 import top.whiteleaf03.api.service.email.EmailService;
 import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
@@ -232,5 +233,42 @@ public class UserServiceImpl implements UserService {
             return ResponseResult.success();
         }
         return ResponseResult.error("验证码错误");
+    }
+
+    /**
+     * 通过用户名获取验证码
+     *
+     * @param getVerifyCodeByAccount 账号
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult getVerifyCode(GetVerifyCodeByAccount getVerifyCodeByAccount) {
+        String account = getVerifyCodeByAccount.getAccount();
+        UserIdAndEmailVO userIdAndEmailVO = userMapper.selectIdAndEmailByAccount(account);
+        String email = userIdAndEmailVO.getEmail();
+        Long id = userIdAndEmailVO.getId();
+        String verifyCode = RandomUtil.randomNumbers(6);
+        redisCache.setCacheObject("[VerifyCode]" + account + verifyCode, id, 5, TimeUnit.MINUTES);
+        emailService.sentEmail(new EmailInfoDTO(email, "重置密码", "您的验证码为:" + verifyCode + "\n5分钟内有效"));
+        return ResponseResult.success();
+    }
+
+    /**
+     * 用户忘记密码
+     *
+     * @param resetPasswordDTO 账号名 验证码 新密码
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult resetPassword(ResetPasswordDTO resetPasswordDTO) {
+        String account = resetPasswordDTO.getAccount();
+        String verifyCode = resetPasswordDTO.getVerifyCode();
+        Long id = redisCache.getCacheObject("[VerifyCode]" + account + verifyCode);
+        if (Objects.isNull(id)) {
+            return ResponseResult.error("验证码错误");
+        }
+        String newPassword = DigestUtil.bcrypt(resetPasswordDTO.getNewPassword());
+        userMapper.updatePasswordById(new EditPasswordDTO(id, newPassword));
+        return ResponseResult.success();
     }
 }

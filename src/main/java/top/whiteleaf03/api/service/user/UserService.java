@@ -1,10 +1,7 @@
 package top.whiteleaf03.api.service.user;
 
 import org.springframework.web.multipart.MultipartFile;
-import top.whiteleaf03.api.modal.dto.EditPasswordDTO;
-import top.whiteleaf03.api.modal.dto.EditUserInfoDTO;
-import top.whiteleaf03.api.modal.dto.LoginDTO;
-import top.whiteleaf03.api.modal.dto.RegisterDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.util.ResponseResult;
 
 import java.io.IOException;
@@ -65,4 +62,20 @@ public interface UserService {
      * @return 返回结果
      */
     ResponseResult editPassword(EditPasswordDTO editPasswordDTO);
+
+    /**
+     * 通过用户名获取验证码
+     *
+     * @param getVerifyCodeByAccount 账号
+     * @return 返回结果
+     */
+    ResponseResult getVerifyCode(GetVerifyCodeByAccount getVerifyCodeByAccount);
+
+    /**
+     * 用户忘记密码
+     *
+     * @param resetPasswordDTO 账号名 验证码 新密码
+     * @return 返回结果
+     */
+    ResponseResult resetPassword(ResetPasswordDTO resetPasswordDTO);
 }

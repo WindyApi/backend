@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EditPasswordDTO {
+public class ResetPasswordDTO {
     /**
-     * 用户id
+     * 账号
      */
-    private Long id;
+    private String account;
 
     /**
      * 验证码
@@ -25,9 +25,4 @@ public class EditPasswordDTO {
      * 新密码
      */
     private String newPassword;
-
-    public EditPasswordDTO(Long id, String newPassword) {
-        this.id = id;
-        this.newPassword = newPassword;
-    }
 }

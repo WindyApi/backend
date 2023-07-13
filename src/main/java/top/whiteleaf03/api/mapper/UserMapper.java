@@ -6,6 +6,7 @@ import top.whiteleaf03.api.modal.dto.EditUserInfoDTO;
 import top.whiteleaf03.api.modal.dto.RegisterDTO;
 import top.whiteleaf03.api.modal.dto.UpdateAvatarDTO;
 import top.whiteleaf03.api.modal.entity.User;
+import top.whiteleaf03.api.modal.vo.UserIdAndEmailVO;
 
 /**
  * @author WhiteLeaf03
@@ -63,4 +64,12 @@ public interface UserMapper {
      * @param editUserInfoDTO 要修改的信息
      */
     void updateNicknameOrGenderOrEmailById(EditUserInfoDTO editUserInfoDTO);
+
+    /**
+     * 根据账号获取id和邮箱地址
+     *
+     * @param account 账号
+     * @return 返回结果
+     */
+    UserIdAndEmailVO selectIdAndEmailByAccount(String account);
 }
