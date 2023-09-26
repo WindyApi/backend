@@ -41,3 +41,4 @@ build/
 *.gz
 application.yml
 config.yml
+.idea
