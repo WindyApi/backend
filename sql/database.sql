@@ -81,6 +81,7 @@ create table `order`
     submitMessage varchar(1024)                      not null comment '提交内容',
     replyMessage  varchar(1024)                      not null comment '回复内容',
     status        tinyint                            not null comment '工单状态 0-尚未处理 1-处理完毕',
-    createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+    createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime     datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 )
     comment '工单记录' charset utf8;
