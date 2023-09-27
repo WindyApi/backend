@@ -77,11 +77,12 @@ create table `order`
     id            bigint auto_increment
         primary key,
     userId        bigint                             not null comment '主键',
+    interfaceId   bigint                             not null comment '相关接口id',
     level         varchar(8)                         not null comment '紧急程度 一般 紧急',
     submitMessage varchar(1024)                      not null comment '提交内容',
-    replyMessage  varchar(1024)                      not null comment '回复内容',
-    status        tinyint                            not null comment '工单状态 0-尚未处理 1-处理完毕',
+    replyMessage  varchar(1024)                      null comment '回复内容',
+    status        tinyint  default 0                 not null comment '工单状态 0-尚未处理 1-处理完毕',
     createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime     datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+    updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 )
     comment '工单记录' charset utf8;
