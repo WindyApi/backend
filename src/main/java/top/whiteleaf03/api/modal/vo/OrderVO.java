@@ -1,7 +1,17 @@
 package top.whiteleaf03.api.modal.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
+/**
+ * @author WhiteLeaf03
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderVO {
     /**
      * 主键自增
