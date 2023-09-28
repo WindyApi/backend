@@ -3,8 +3,8 @@
 
 <mapper namespace="top.whiteleaf03.api.mapper.OrderMapper">
     <insert id="insertOrder">
-        INSERT INTO windy_api.order (userId, submitMessage, level)
-        VALUE (#{userId}, #{submitMessage}, #{level});
+        INSERT INTO windy_api.order (userId, interfaceId, submitMessage, level)
+        VALUE (#{userId}, #{interfaceId}, #{submitMessage}, #{level});
     </insert>
 
     <select id="getCountByUserIdOrStatus" resultType="java.lang.Long">

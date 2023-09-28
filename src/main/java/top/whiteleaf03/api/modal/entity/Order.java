@@ -24,6 +24,11 @@ public class Order {
     private Long userId;
 
     /**
+     * 接口id
+     */
+    private Long interfaceId;
+
+    /**
      * 紧急程度
      */
     private String level;
