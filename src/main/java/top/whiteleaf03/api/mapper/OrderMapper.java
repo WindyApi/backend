@@ -2,6 +2,8 @@ package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import top.whiteleaf03.api.modal.dto.NewOrderDTO;
+import top.whiteleaf03.api.modal.dto.PageNumDTO;
+import top.whiteleaf03.api.modal.dto.QuerySelfOrderDTO;
 import top.whiteleaf03.api.modal.dto.ReplyOrderDTO;
 import top.whiteleaf03.api.modal.entity.Order;
 import top.whiteleaf03.api.modal.vo.OrderVO;
@@ -20,20 +22,22 @@ public interface OrderMapper {
      */
     void insertOrder(NewOrderDTO newOrderDTO);
 
+    Long getCountByUserIdOrStatus(Long userId);
+
     /**
      * 查询自身所有工单
      *
-     * @param userId 用户id
+     * @param querySelfOrderDTO 用户id和页号
      * @return 返回结果
      */
-    List<OrderVO> getAllOrder(Long userId);
+    List<OrderVO> getAllOrder(QuerySelfOrderDTO querySelfOrderDTO);
 
     /**
      * 获取所有待处理工单
      *
      * @return 返回结果
      */
-    List<Order> getAllWaitingOrder();
+    List<Order> getAllWaitingOrder(PageNumDTO pageNumDTO);
 
     /**
      * 管理员回复工单

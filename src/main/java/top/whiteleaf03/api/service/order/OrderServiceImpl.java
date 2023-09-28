@@ -7,12 +7,11 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import top.whiteleaf03.api.mapper.OrderMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
-import top.whiteleaf03.api.modal.dto.EmailInfoDTO;
-import top.whiteleaf03.api.modal.dto.NewOrderDTO;
-import top.whiteleaf03.api.modal.dto.ReplyOrderDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.Order;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.OrderVO;
+import top.whiteleaf03.api.modal.vo.PageSizeVO;
 import top.whiteleaf03.api.modal.vo.WaitingOrderVO;
 import top.whiteleaf03.api.service.email.EmailService;
 import top.whiteleaf03.api.util.ResponseResult;
@@ -53,12 +52,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 查询自己的工单
+     * 获取分页总数
+     *
+     * @param type self: 用户获取自身工单总数 / admin: 管理员获取待审核总数
      */
     @Override
-    public ResponseResult getAllOrder() {
+    public ResponseResult getPageSum(String type) {
+        // 用户查自身
+        if ("self".equals(type)) {
+            User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+            Long userId = user.getId();
+            Long total = orderMapper.getCountByUserIdOrStatus(userId);
+            return ResponseResult.success(new PageSizeVO(total));
+        }
+        // 管理员查待审批
+        if ("admin".equals(type)) {
+            Long total = orderMapper.getCountByUserIdOrStatus(null);
+            return ResponseResult.success(new PageSizeVO(total));
+        }
+        // 不可能发生吧
+        return ResponseResult.error();
+    }
+
+    /**
+     * 查询自己的工单
+     *
+     * @param querySelfOrderDTO 用户id和页号
+     */
+    @Override
+    public ResponseResult getAllOrder(QuerySelfOrderDTO querySelfOrderDTO) {
         User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
-        List<OrderVO> orderVOList = orderMapper.getAllOrder(user.getId());
+        querySelfOrderDTO.setUserId(user.getId());
+        List<OrderVO> orderVOList = orderMapper.getAllOrder(querySelfOrderDTO);
         return ResponseResult.success(orderVOList);
     }
 
@@ -68,8 +93,8 @@ public class OrderServiceImpl implements OrderService {
      * @return 返回结果
      */
     @Override
-    public ResponseResult getAllWaitingOrder() {
-        List<Order> allWaitingOrders = orderMapper.getAllWaitingOrder();
+    public ResponseResult getAllWaitingOrder(PageNumDTO pageNumDTO) {
+        List<Order> allWaitingOrders = orderMapper.getAllWaitingOrder(pageNumDTO);
         List<WaitingOrderVO> waitingOrderVOList = new ArrayList<>();
         for (Order order : allWaitingOrders) {
             waitingOrderVOList.add(new WaitingOrderVO(order, userMapper.selectNicknameById(order.getUserId())));

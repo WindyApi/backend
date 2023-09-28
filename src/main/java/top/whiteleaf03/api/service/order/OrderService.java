@@ -1,6 +1,8 @@
 package top.whiteleaf03.api.service.order;
 
 import top.whiteleaf03.api.modal.dto.NewOrderDTO;
+import top.whiteleaf03.api.modal.dto.PageNumDTO;
+import top.whiteleaf03.api.modal.dto.QuerySelfOrderDTO;
 import top.whiteleaf03.api.modal.dto.ReplyOrderDTO;
 import top.whiteleaf03.api.util.ResponseResult;
 
@@ -17,16 +19,25 @@ public interface OrderService {
     ResponseResult insertOrder(NewOrderDTO newOrderDTO);
 
     /**
-     * 查询自己的工单
+     * 获取分页总数
+     *
+     * @param type self: 用户获取自身工单总数 / admin: 管理员获取待审核总数
      */
-    ResponseResult getAllOrder();
+    ResponseResult getPageSum(String type);
+
+    /**
+     * 查询自己的工单
+     *
+     * @param querySelfOrderDTO 用户id和页号
+     */
+    ResponseResult getAllOrder(QuerySelfOrderDTO querySelfOrderDTO);
 
     /**
      * 管理员获取未处理工单
      *
      * @return 返回结果
      */
-    ResponseResult getAllWaitingOrder();
+    ResponseResult getAllWaitingOrder(PageNumDTO pageNumDTO);
 
     /**
      * 管理员回复工单

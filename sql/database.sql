@@ -77,7 +77,7 @@ create table `order`
     id            bigint auto_increment
         primary key,
     userId        bigint                             not null comment '主键',
-    interfaceId   bigint                             not null comment '相关接口id',
+    interfaceId   bigint default -1                  not null comment '相关接口id',
     level         varchar(8)                         not null comment '紧急程度 一般 紧急',
     submitMessage varchar(1024)                      not null comment '提交内容',
     replyMessage  varchar(1024)                      null comment '回复内容',

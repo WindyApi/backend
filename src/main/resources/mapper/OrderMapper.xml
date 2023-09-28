@@ -3,20 +3,34 @@
 
 <mapper namespace="top.whiteleaf03.api.mapper.OrderMapper">
     <insert id="insertOrder">
-        INSERT INTO windy_api.order （userId, submitMessage, level）
+        INSERT INTO windy_api.order (userId, submitMessage, level)
         VALUE (#{userId}, #{submitMessage}, #{level});
     </insert>
+
+    <select id="getCountByUserIdOrStatus" resultType="java.lang.Long">
+        SELECT COUNT(id)
+        FROM windy_api.order
+        WHERE
+            <choose>
+                <when test="userId != null and userId >= 0">userId = #{userId};</when>
+                <otherwise>status = 0</otherwise>
+            </choose>
+    </select>
 
     <select id="getAllOrder" resultType="top.whiteleaf03.api.modal.vo.OrderVO">
         SELECT id, level, submitMessage, replyMessage, status, createTime, updateTime
         FROM windy_api.order
-        WHERE userId = #{userId};
+        WHERE userId = #{userId}
+        ORDER BY id
+        LIMIT ${(pageNum - 1) * 10}, 10;
     </select>
 
     <select id="getAllWaitingOrder" resultType="top.whiteleaf03.api.modal.entity.Order">
         SELECT id, userId, level, submitMessage, createTime
         FROM windy_api.order
-        WHERE `status` = 0;
+        WHERE `status` = 0
+        ORDER BY id
+        LIMIT ${(pageNum - 1) * 10}, 10;
     </select>
 
     <update id="updateReplyMessageById">
