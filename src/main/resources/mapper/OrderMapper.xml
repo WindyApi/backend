@@ -7,14 +7,17 @@
         VALUE (#{userId}, #{interfaceId}, #{submitMessage}, #{level});
     </insert>
 
-    <select id="getCountByUserIdOrStatus" resultType="java.lang.Long">
+    <select id="getCountByUserId" resultType="java.lang.Long">
         SELECT COUNT(id)
-        FROM windy_api.order
-        WHERE
-            <choose>
-                <when test="userId != null and userId >= 0">userId = #{userId};</when>
-                <otherwise>status = 0</otherwise>
-            </choose>
+        FROM windy_api.`order`
+        WHERE userId = #{userId};
+    </select>
+
+    <select id="getCountByStatus" resultType="top.whiteleaf03.api.modal.vo.OrderStatusVO">
+        SELECT
+            SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS waitTotal,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS endTotal
+        FROM windy_api.`order`;
     </select>
 
     <select id="getSelfOrder" resultType="top.whiteleaf03.api.modal.entity.Order">

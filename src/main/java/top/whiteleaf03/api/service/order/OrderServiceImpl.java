@@ -12,6 +12,7 @@ import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.Order;
 import top.whiteleaf03.api.modal.entity.User;
+import top.whiteleaf03.api.modal.vo.OrderStatusVO;
 import top.whiteleaf03.api.modal.vo.OrderVO;
 import top.whiteleaf03.api.modal.vo.PageSizeVO;
 import top.whiteleaf03.api.modal.vo.WaitingOrderVO;
@@ -66,13 +67,13 @@ public class OrderServiceImpl implements OrderService {
         if ("self".equals(type)) {
             User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
             Long userId = user.getId();
-            Long total = orderMapper.getCountByUserIdOrStatus(userId);
+            Long total = orderMapper.getCountByUserId(userId);
             return ResponseResult.success(new PageSizeVO(total));
         }
         // 管理员查待审批
         if ("admin".equals(type)) {
-            Long total = orderMapper.getCountByUserIdOrStatus(null);
-            return ResponseResult.success(new PageSizeVO(total));
+            OrderStatusVO orderStatusVO = orderMapper.getCountByStatus();
+            return ResponseResult.success(orderStatusVO);
         }
         // 不可能发生吧
         return ResponseResult.error();

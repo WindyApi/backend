@@ -3,6 +3,7 @@ package top.whiteleaf03.api.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.Order;
+import top.whiteleaf03.api.modal.vo.OrderStatusVO;
 
 import java.util.List;
 
@@ -18,7 +19,16 @@ public interface OrderMapper {
      */
     void insertOrder(NewOrderDTO newOrderDTO);
 
-    Long getCountByUserIdOrStatus(Long userId);
+    /**
+     * @param userId 用户id
+     * @return 返回结果
+     */
+    Long getCountByUserId(Long userId);
+
+    /**
+     * @return 返回结果
+     */
+    OrderStatusVO getCountByStatus();
 
     /**
      * 查询自身所有工单
