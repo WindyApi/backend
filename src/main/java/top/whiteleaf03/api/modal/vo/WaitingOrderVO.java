@@ -25,6 +25,11 @@ public class WaitingOrderVO {
     private String nickname;
 
     /**
+     * 接口名称
+     */
+    private String interfaceName;
+
+    /**
      * 紧急程度
      */
     private String level;
@@ -46,9 +51,10 @@ public class WaitingOrderVO {
      */
     private Date createTime;
 
-    public WaitingOrderVO(Order order, String nickname) {
+    public WaitingOrderVO(Order order, String nickname, String interfaceName) {
         this.orderId = order.getId();
         this.nickname = nickname;
+        this.interfaceName = interfaceName;
         this.level = order.getLevel();
         this.submitMessage = order.getSubmitMessage();
         this.status = order.getStatus();

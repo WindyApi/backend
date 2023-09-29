@@ -60,4 +60,10 @@
             <if test="responseHeader != null">responseHeader = #{responseHeader},</if>
         </trim>
     </update>
+
+    <select id="selectNameById" resultType="java.lang.String">
+        SELECT name
+        FROM windy_api.interface_info
+        WHERE id = #{id};
+    </select>
 </mapper>

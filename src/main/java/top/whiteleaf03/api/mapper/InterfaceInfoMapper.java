@@ -71,4 +71,11 @@ public interface InterfaceInfoMapper {
      * @param updateInterfaceDTO 要修改的接口信息
      */
     void updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById(UpdateInterfaceDTO updateInterfaceDTO);
+
+    /**
+     * 根据id获取接口名称
+     *
+     * @param id 接口id
+     */
+    String selectNameById(Long id);
 }

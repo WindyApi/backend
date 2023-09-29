@@ -17,25 +17,28 @@
             </choose>
     </select>
 
-    <select id="getAllOrder" resultType="top.whiteleaf03.api.modal.vo.OrderVO">
-        SELECT id, level, submitMessage, replyMessage, status, createTime, updateTime
+    <select id="getSelfOrder" resultType="top.whiteleaf03.api.modal.entity.Order">
+        SELECT id, interfaceId, level, submitMessage, replyMessage, status, createTime, updateTime
         FROM windy_api.order
         WHERE userId = #{userId}
         ORDER BY id
         LIMIT ${(pageNum - 1) * 10}, 10;
     </select>
 
-    <select id="getAllWaitingOrder" resultType="top.whiteleaf03.api.modal.entity.Order">
-        SELECT id, userId, level, submitMessage, createTime
+    <select id="getAllOrder" resultType="top.whiteleaf03.api.modal.entity.Order">
+        SELECT id, userId, level, submitMessage, status, createTime
         FROM windy_api.order
-        WHERE `status` = 0
+        <choose>
+            <when test="status == 0">WHERE status = 0</when>
+            <when test="status == 1">WHERE status = 1</when>
+        </choose>
         ORDER BY id
         LIMIT ${(pageNum - 1) * 10}, 10;
     </select>
 
     <update id="updateReplyMessageById">
         UPDATE windy_api.order
-        SET replyMessage = #{replyMessage} AND status = 1
+        SET replyMessage = #{replyMessage}, status = 1
         WHERE id = #{orderId};
     </update>
 

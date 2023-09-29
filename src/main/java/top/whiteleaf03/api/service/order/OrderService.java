@@ -1,9 +1,6 @@
 package top.whiteleaf03.api.service.order;
 
-import top.whiteleaf03.api.modal.dto.NewOrderDTO;
-import top.whiteleaf03.api.modal.dto.PageNumDTO;
-import top.whiteleaf03.api.modal.dto.QuerySelfOrderDTO;
-import top.whiteleaf03.api.modal.dto.ReplyOrderDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
@@ -30,14 +27,15 @@ public interface OrderService {
      *
      * @param querySelfOrderDTO 用户id和页号
      */
-    ResponseResult getAllOrder(QuerySelfOrderDTO querySelfOrderDTO);
+    ResponseResult getSelfOrder(QuerySelfOrderDTO querySelfOrderDTO);
 
     /**
-     * 管理员获取未处理工单
+     * 管理员获取工单
      *
+     * @param queryAllOrderDTO 页号和工单状态
      * @return 返回结果
      */
-    ResponseResult getAllWaitingOrder(PageNumDTO pageNumDTO);
+    ResponseResult getAllOrder(QueryAllOrderDTO queryAllOrderDTO);
 
     /**
      * 管理员回复工单

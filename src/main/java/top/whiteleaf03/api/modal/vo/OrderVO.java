@@ -3,6 +3,7 @@ package top.whiteleaf03.api.modal.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import top.whiteleaf03.api.modal.entity.Order;
 
 import java.util.Date;
 
@@ -29,6 +30,11 @@ public class OrderVO {
     private String submitMessage;
 
     /**
+     * 相关接口
+     */
+    private String interfaceName;
+
+    /**
      * 答复信息
      */
     private String replyMessage;
@@ -49,4 +55,15 @@ public class OrderVO {
      * 更新日期
      */
     private Date updateTime;
+
+    public OrderVO(Order order, String interfaceName) {
+        this.id = order.getId();
+        this.level = order.getLevel();
+        this.submitMessage = order.getSubmitMessage();
+        this.interfaceName = interfaceName;
+        this.replyMessage = order.getReplyMessage();
+        this.status = order.getStatus();
+        this.createTime = order.getCreateTime();
+        this.updateTime = order.getUpdateTime();
+    }
 }

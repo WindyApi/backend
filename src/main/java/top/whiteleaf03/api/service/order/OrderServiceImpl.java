@@ -1,10 +1,12 @@
 package top.whiteleaf03.api.service.order;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.mapper.OrderMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.dto.*;
@@ -28,12 +30,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
     private final EmailService emailService;
+    private final InterfaceInfoMapper interfaceInfoMapper;
 
     @Autowired
-    public OrderServiceImpl(OrderMapper orderMapper, UserMapper userMapper, EmailService emailService) {
+    public OrderServiceImpl(OrderMapper orderMapper, UserMapper userMapper, EmailService emailService, InterfaceInfoMapper interfaceInfoMapper) {
         this.orderMapper = orderMapper;
         this.userMapper = userMapper;
         this.emailService = emailService;
+        this.interfaceInfoMapper = interfaceInfoMapper;
     }
 
     /**
@@ -80,24 +84,37 @@ public class OrderServiceImpl implements OrderService {
      * @param querySelfOrderDTO 用户id和页号
      */
     @Override
-    public ResponseResult getAllOrder(QuerySelfOrderDTO querySelfOrderDTO) {
+    public ResponseResult getSelfOrder(QuerySelfOrderDTO querySelfOrderDTO) {
         User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
         querySelfOrderDTO.setUserId(user.getId());
-        List<OrderVO> orderVOList = orderMapper.getAllOrder(querySelfOrderDTO);
+        List<Order> orderList = orderMapper.getSelfOrder(querySelfOrderDTO);
+        List<OrderVO> orderVOList = new ArrayList<>();
+        for (Order order : orderList) {
+            String interfaceName = interfaceInfoMapper.selectNameById(order.getInterfaceId());
+            if (StrUtil.isBlank(interfaceName)) {
+                interfaceName = "非特定接口";
+            }
+            orderVOList.add(new OrderVO(order, interfaceName));
+        }
         return ResponseResult.success(orderVOList);
     }
 
     /**
-     * 管理员获取未处理工单
+     * 管理员获取工单
      *
      * @return 返回结果
      */
     @Override
-    public ResponseResult getAllWaitingOrder(PageNumDTO pageNumDTO) {
-        List<Order> allWaitingOrders = orderMapper.getAllWaitingOrder(pageNumDTO);
+    public ResponseResult getAllOrder(QueryAllOrderDTO queryAllOrderDTO) {
+        List<Order> allWaitingOrders = orderMapper.getAllOrder(queryAllOrderDTO);
         List<WaitingOrderVO> waitingOrderVOList = new ArrayList<>();
         for (Order order : allWaitingOrders) {
-            waitingOrderVOList.add(new WaitingOrderVO(order, userMapper.selectNicknameById(order.getUserId())));
+            String nickname = userMapper.selectNicknameById(order.getUserId());
+            String interfaceName = interfaceInfoMapper.selectNameById(order.getInterfaceId());
+            if (StrUtil.isBlank(interfaceName)) {
+                interfaceName = "非特定接口";
+            }
+            waitingOrderVOList.add(new WaitingOrderVO(order, nickname, interfaceName));
         }
         return ResponseResult.success(waitingOrderVOList);
     }

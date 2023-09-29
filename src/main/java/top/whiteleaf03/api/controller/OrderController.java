@@ -4,10 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.whiteleaf03.api.aop.TokenCheck;
-import top.whiteleaf03.api.modal.dto.NewOrderDTO;
-import top.whiteleaf03.api.modal.dto.PageNumDTO;
-import top.whiteleaf03.api.modal.dto.QuerySelfOrderDTO;
-import top.whiteleaf03.api.modal.dto.ReplyOrderDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.service.order.OrderService;
 import top.whiteleaf03.api.util.ResponseResult;
 
@@ -32,10 +29,10 @@ public class OrderController {
 
     @TokenCheck("")
     @GetMapping("")
-    public ResponseResult getAllOrder(QuerySelfOrderDTO querySelfOrderDTO) {
+    public ResponseResult getSelfOrder(QuerySelfOrderDTO querySelfOrderDTO) {
         if (ObjectUtil.isNotNull(querySelfOrderDTO.getPageNum()) && querySelfOrderDTO.getPageNum() >= 0) {
             // 携带页号，返回指定页数据
-            return orderService.getAllOrder(querySelfOrderDTO);
+            return orderService.getSelfOrder(querySelfOrderDTO);
         }
         // 未携带页号，返回分页总数
         return orderService.getPageSum("self");
@@ -43,10 +40,10 @@ public class OrderController {
 
     @TokenCheck("admin")
     @GetMapping("all")
-    public ResponseResult getAllWaitingOrder(PageNumDTO pageNumDTO) {
-        if (ObjectUtil.isNotNull(pageNumDTO.getPageNum()) && pageNumDTO.getPageNum() >= 0) {
+    public ResponseResult getAllOrder(QueryAllOrderDTO queryAllOrderDTO) {
+        if (ObjectUtil.isNotNull(queryAllOrderDTO.getPageNum()) && queryAllOrderDTO.getPageNum() >= 0) {
             // 携带页号，返回指定页数据
-            return orderService.getAllWaitingOrder(pageNumDTO);
+            return orderService.getAllOrder(queryAllOrderDTO);
         }
         // 未携带页号，返回分页总数
         return orderService.getPageSum("admin");
