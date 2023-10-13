@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="top.whiteleaf03.api.mapper.InterfaceInfoMapper">
-    <insert id="insert">
-        INSERT INTO windy_api.interface_info (name, `describe`, method, url, params, requestHeader, responseHeader, userId)
-            VALUE (#{name}, #{describe}, #{method}, #{url}, #{params}, #{requestHeader}, #{responseHeader}, #{userId});
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO windy_api.interface_info (name, `describe`, method, url, userId)
+            VALUE (#{name}, #{describe}, #{method}, #{url}, #{userId});
     </insert>
 
     <select id="selectCountByStatusAndIsDelete" resultType="java.lang.Long">
@@ -21,8 +21,8 @@
         LIMIT ${(pageNum - 1) * 10}, 10;
     </select>
 
-    <select id="selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete" resultType="top.whiteleaf03.api.modal.vo.InterfaceDocVO">
-        SELECT name, `describe`, method, url, params, requestHeader, responseHeader, status, createTime, updateTime
+    <select id="selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete" resultType="top.whiteleaf03.api.modal.entity.InterfaceInfo">
+        SELECT name, `describe`, method, url, status, createTime, updateTime
         FROM windy_api.interface_info
         WHERE id = #{id} AND isDelete = false;
     </select>
@@ -39,25 +39,22 @@
         WHERE isDelete = false;
     </select>
 
-    <select id="selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete"
+    <select id="selectIdAndNameAndDescribeAndMethodAndUrlAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete"
             resultType="top.whiteleaf03.api.modal.entity.InterfaceInfo">
-        SELECT id, name, `describe`, method, url, params, requestHeader, responseHeader, status, userId, createTime, updateTime
+        SELECT id, name, `describe`, method, url, status, userId, createTime, updateTime
         FROM windy_api.interface_info
         WHERE isDelete = false
         ORDER BY id
         LIMIT ${(pageNum - 1) * 5}, 5;
     </select>
 
-    <update id="updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById">
+    <update id="updateNameOrDescribeOrMethodOrUrlById">
         UPDATE windy_api.interface_info
         <trim prefix="set" suffixOverrides="," suffix="where id = #{id}">
             <if test="name != null">name = #{name},</if>
             <if test="describe != null">`describe` = #{describe},</if>
             <if test="method != null">method = #{method},</if>
             <if test="url != null">url = #{url},</if>
-            <if test="params != null">params = #{params},</if>
-            <if test="requestHeader != null">requestHeader = #{requestHeader},</if>
-            <if test="responseHeader != null">responseHeader = #{responseHeader},</if>
         </trim>
     </update>
 

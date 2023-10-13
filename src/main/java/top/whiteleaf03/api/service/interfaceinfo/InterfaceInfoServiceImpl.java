@@ -1,13 +1,16 @@
 package top.whiteleaf03.api.service.interfaceinfo;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
+import top.whiteleaf03.api.modal.document.InterfaceInfoDocument;
 import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.InterfaceInfo;
 import top.whiteleaf03.api.modal.vo.PageSizeVO;
@@ -15,10 +18,10 @@ import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.InterfaceInfoVO;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
+import top.whiteleaf03.api.util.MongoUtil;
 import top.whiteleaf03.api.util.ResponseResult;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author WhiteLeaf03
@@ -28,11 +31,13 @@ import java.util.List;
 public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     private final InterfaceInfoMapper interfaceInfoMapper;
     private final UserMapper userMapper;
+    private final MongoUtil mongoUtil;
 
     @Autowired
-    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper) {
+    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper, MongoUtil mongoUtil) {
         this.interfaceInfoMapper = interfaceInfoMapper;
         this.userMapper = userMapper;
+        this.mongoUtil = mongoUtil;
     }
 
     /**
@@ -46,6 +51,8 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
         newInterfaceDTO.setUserId(user.getId());
         interfaceInfoMapper.insert(newInterfaceDTO);
+        InterfaceInfoDocument interfaceInfoDocument = new InterfaceInfoDocument(newInterfaceDTO);
+        mongoUtil.save(interfaceInfoDocument);
         return ResponseResult.success();
     }
 
@@ -106,7 +113,10 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
      */
     @Override
     public ResponseResult queryInterfaceDocById(InterfaceIdDTO interfaceIdDTO) {
-        InterfaceDocVO interfaceDocVO = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(interfaceIdDTO);
+        InterfaceInfo interfaceInfo = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(interfaceIdDTO);
+        List<?> list = mongoUtil.find("interfaceInfoId", interfaceIdDTO.getId(), InterfaceInfoDocument.class);
+        InterfaceInfoDocument interfaceInfoDocument = (InterfaceInfoDocument) list.get(0);
+        InterfaceDocVO interfaceDocVO = new InterfaceDocVO(interfaceInfo, interfaceInfoDocument);
         return ResponseResult.success(interfaceDocVO);
     }
 
@@ -129,10 +139,12 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
      */
     @Override
     public ResponseResult queryAllInterfaceByPage(PageNumDTO pageNumDTO) {
-        List<InterfaceInfo> interfaceInfos = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(pageNumDTO);
+        List<InterfaceInfo> interfaceInfos = interfaceInfoMapper.selectIdAndNameAndDescribeAndMethodAndUrlAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(pageNumDTO);
         List<InterfaceInfoVO> interfaceInfoVOs = new ArrayList<>();
         for (InterfaceInfo interfaceInfo : interfaceInfos) {
-            interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getUserId())));
+            List<?> list = mongoUtil.find("interfaceInfoId", interfaceInfo.getId(), InterfaceInfoDocument.class);
+            InterfaceInfoDocument interfaceInfoDocument = (InterfaceInfoDocument) list.get(0);
+            interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getUserId()), interfaceInfoDocument));
         }
         return ResponseResult.success(interfaceInfoVOs);
     }
@@ -145,7 +157,12 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
      */
     @Override
     public ResponseResult updateInterfaceById(UpdateInterfaceDTO updateInterfaceDTO) {
-        interfaceInfoMapper.updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById(updateInterfaceDTO);
+        interfaceInfoMapper.updateNameOrDescribeOrMethodOrUrlById(updateInterfaceDTO);
+        Map<String, Object> data = new HashMap<>();
+        data.put("params", updateInterfaceDTO.getParams());
+        data.put("requestHeader", updateInterfaceDTO.getRequestHeader());
+        data.put("responseHeader", updateInterfaceDTO.getResponseHeader());
+        mongoUtil.update("interfaceInfoId", updateInterfaceDTO.getId(), InterfaceInfoDocument.class, data);
         return ResponseResult.success();
     }
 }
