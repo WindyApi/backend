@@ -1,8 +1,12 @@
 package top.whiteleaf03.api.modal.vo;
 
+import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import top.whiteleaf03.api.modal.document.InterfaceInfoDocument;
+import top.whiteleaf03.api.modal.dto.InterfaceIdDTO;
+import top.whiteleaf03.api.modal.entity.InterfaceInfo;
 
 import java.util.Date;
 
@@ -62,4 +66,17 @@ public class InterfaceDocVO {
      * 更新时间
      */
     private Date updateTime;
+
+    public InterfaceDocVO(InterfaceInfo interfaceInfo, InterfaceInfoDocument interfaceInfoDocument) {
+        this.name = interfaceInfo.getName();
+        this.describe = interfaceInfo.getDescribe();
+        this.method = interfaceInfo.getMethod();
+        this.url = interfaceInfo.getUrl();
+        this.params = JSONUtil.toJsonStr(interfaceInfoDocument.getParams());
+        this.requestHeader = JSONUtil.toJsonStr(interfaceInfoDocument.getRequestHeader());
+        this.responseHeader = JSONUtil.toJsonStr(interfaceInfoDocument.getResponseHeader());
+        this.status = interfaceInfo.getStatus();
+        this.createTime = interfaceInfo.getCreateTime();
+        this.updateTime = interfaceInfo.getUpdateTime();
+    }
 }

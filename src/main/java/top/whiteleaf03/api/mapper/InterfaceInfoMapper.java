@@ -1,9 +1,9 @@
 package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.InterfaceInfo;
-import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
 
 import java.util.List;
@@ -18,6 +18,7 @@ public interface InterfaceInfoMapper {
      *
      * @param newInterfaceDTO 接口信息
      */
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(NewInterfaceDTO newInterfaceDTO);
 
     /**
@@ -41,7 +42,7 @@ public interface InterfaceInfoMapper {
      * @param interfaceIdDTO 包含页号
      * @return 返回活跃接口信息
      */
-    InterfaceDocVO selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(InterfaceIdDTO interfaceIdDTO);
+    InterfaceInfo selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(InterfaceIdDTO interfaceIdDTO);
 
     /**
      * 上线/下线接口
@@ -63,14 +64,14 @@ public interface InterfaceInfoMapper {
      * @param pageNumDTO 页号
      * @return 返回接口信息
      */
-    List<InterfaceInfo> selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(PageNumDTO pageNumDTO);
+    List<InterfaceInfo> selectIdAndNameAndDescribeAndMethodAndUrlAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(PageNumDTO pageNumDTO);
 
     /**
      * 修改接口信息
      *
      * @param updateInterfaceDTO 要修改的接口信息
      */
-    void updateNameOrDescribeOrMethodOrUrlOrParamsOrRequestHeaderOrResponseHeaderById(UpdateInterfaceDTO updateInterfaceDTO);
+    void updateNameOrDescribeOrMethodOrUrlById(UpdateInterfaceDTO updateInterfaceDTO);
 
     /**
      * 根据id获取接口名称

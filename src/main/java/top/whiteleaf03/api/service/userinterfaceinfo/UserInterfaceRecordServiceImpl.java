@@ -58,7 +58,7 @@ public class UserInterfaceRecordServiceImpl implements UserInterfaceRecordServic
         List<UserInterfaceRecordVO> userInterfaceRecordVOs = new ArrayList<>();
         List<UserInterfaceRecord> userInterfaceRecords = userInterfaceRecordMapper.selectInterfaceIdAndTotalNumAndLeftNumAndCreateTimeAndUpdateTime(user.getId());
         for (UserInterfaceRecord userInterfaceRecord : userInterfaceRecords) {
-            String interfaceName = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndParamsAndRequestHeaderAndResponseHeaderAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(new InterfaceIdDTO(userInterfaceRecord.getInterfaceId())).getName();
+            String interfaceName = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(new InterfaceIdDTO(userInterfaceRecord.getInterfaceId())).getName();
             userInterfaceRecordVOs.add(new UserInterfaceRecordVO(userInterfaceRecord, interfaceName));
         }
         return ResponseResult.success(userInterfaceRecordVOs);

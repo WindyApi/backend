@@ -12,6 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NewInterfaceDTO {
     /**
+     * 接口id
+     */
+    private Long id;
+
+    /**
      * 接口名称
      */
     private String name;
