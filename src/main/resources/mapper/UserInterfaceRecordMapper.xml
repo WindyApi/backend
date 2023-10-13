@@ -24,4 +24,16 @@
         FROM windy_api.user_interface_record
         WHERE userId = #{userId} AND interfaceId = #{interfaceId};
     </select>
+
+    <select id="selectLeftNumByUserIdAndInterfaceId" resultType="java.lang.Long">
+        SELECT leftNum
+        FROM windy_api.user_interface_record
+        WHERE userId = #{userId} AND interfaceId = #{interfaceId};
+    </select>
+
+    <update id="updateLeftNumByUserIdAndInterfaceId">
+        UPDATE windy_api.user_interface_record
+        SET leftNum = leftNum - 1
+        WHERE userId = #{userId} AND interfaceId = #{interfaceId};
+    </update>
 </mapper>

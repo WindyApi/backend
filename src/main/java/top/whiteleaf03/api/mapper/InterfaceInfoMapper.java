@@ -79,4 +79,12 @@ public interface InterfaceInfoMapper {
      * @param id 接口id
      */
     String selectNameById(Long id);
+
+    /**
+     * 根据路径查询接口id和状态
+     *
+     * @param url 接口路径
+     * @return 返回结果
+     */
+    InterfaceIdAndStatusDTO selectIdAndStatusByUrl(String url);
 }

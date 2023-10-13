@@ -63,4 +63,10 @@
         FROM windy_api.interface_info
         WHERE id = #{id};
     </select>
+
+    <select id="selectIdAndStatusByUrl" resultType="top.whiteleaf03.api.modal.dto.InterfaceIdAndStatusDTO">
+        SELECT id AS interfaceId, status
+        FROM windy_api.interface_info
+        WHERE url = #{url};
+    </select>
 </mapper>

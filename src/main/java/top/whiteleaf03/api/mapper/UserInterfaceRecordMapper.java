@@ -42,4 +42,19 @@ public interface UserInterfaceRecordMapper {
      * @return 返回结果
      */
     Long selectIdByUserIdAndInterfaceId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
+
+    /**
+     * 查询剩余使用次数
+     *
+     * @param userIdAndInterfaceIdDTO 用户id和接口id
+     * @return 返回结果
+     */
+    Long selectLeftNumByUserIdAndInterfaceId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
+
+    /**
+     * 减少使用次数
+     *
+     * @param userIdAndInterfaceIdDTO 用户id和接口id
+     */
+    void updateLeftNumByUserIdAndInterfaceId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
 }

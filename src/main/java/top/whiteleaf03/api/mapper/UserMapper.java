@@ -1,10 +1,7 @@
 package top.whiteleaf03.api.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import top.whiteleaf03.api.modal.dto.EditPasswordDTO;
-import top.whiteleaf03.api.modal.dto.EditUserInfoDTO;
-import top.whiteleaf03.api.modal.dto.RegisterDTO;
-import top.whiteleaf03.api.modal.dto.UpdateAvatarDTO;
+import top.whiteleaf03.api.modal.dto.*;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.UserIdAndEmailVO;
 
@@ -72,4 +69,12 @@ public interface UserMapper {
      * @return 返回结果
      */
     UserIdAndEmailVO selectIdAndEmailByAccount(String account);
+
+    /**
+     * 根据ak获取用户的id和sk
+     *
+     * @param accessKey accessKey
+     * @return 返回用户的id和sk
+     */
+    UserIdAndSecretKeyDTO selectIdAndSecretKeyByAccessKey(String accessKey);
 }

@@ -53,4 +53,11 @@
         FROM windy_api.user
         WHERE account = #{account};
     </select>
+
+    <select id="selectIdAndSecretKeyByAccessKey"
+            resultType="top.whiteleaf03.api.modal.dto.UserIdAndSecretKeyDTO">
+        SELECT id, secretKey
+        FROM windy_api.user
+        WHERE accessKey = #{accessKey};
+    </select>
 </mapper>
