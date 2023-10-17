@@ -1,13 +1,13 @@
 package top.whiteleaf03.api.service.interfaceinfo;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.json.JSONUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import top.whiteleaf03.api.modal.document.es.InterfaceInfoESDocument;
+import top.whiteleaf03.api.repository.InterfaceInfoRepository;
 import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.document.InterfaceInfoDocument;
@@ -32,12 +32,14 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     private final InterfaceInfoMapper interfaceInfoMapper;
     private final UserMapper userMapper;
     private final MongoUtil mongoUtil;
+    private final InterfaceInfoRepository interfaceInfoRepository;
 
     @Autowired
-    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper, MongoUtil mongoUtil) {
+    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper, MongoUtil mongoUtil, InterfaceInfoRepository interfaceInfoRepository) {
         this.interfaceInfoMapper = interfaceInfoMapper;
         this.userMapper = userMapper;
         this.mongoUtil = mongoUtil;
+        this.interfaceInfoRepository = interfaceInfoRepository;
     }
 
     /**
@@ -164,5 +166,20 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         data.put("responseHeader", updateInterfaceDTO.getResponseHeader());
         mongoUtil.update("interfaceInfoId", updateInterfaceDTO.getId(), InterfaceInfoDocument.class, data);
         return ResponseResult.success();
+    }
+
+    /**
+     * 搜索接口
+     *
+     * @param searchDTO 包含关键词
+     * @return 返回结果
+     */
+    @Override
+    public ResponseResult getInterfaceInfoByKeyword(SearchDTO searchDTO) {
+        if (StrUtil.isBlank(searchDTO.getKeyword())) {
+            return ResponseResult.error("参数不允许为空");
+        }
+        List<InterfaceInfoESDocument> interfaceInfoESDocuments = interfaceInfoRepository.queryInterfaceInfoESDocumentByKeywordInNameOrDescribe(searchDTO.getKeyword());
+        return ResponseResult.success(interfaceInfoESDocuments);
     }
 }

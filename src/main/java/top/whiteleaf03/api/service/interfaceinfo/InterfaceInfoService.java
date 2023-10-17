@@ -78,4 +78,12 @@ public interface InterfaceInfoService {
      * @return 返回结果
      */
     ResponseResult updateInterfaceById(UpdateInterfaceDTO updateInterfaceDTO);
+
+    /**
+     * 搜索接口
+     *
+     * @param searchDTO 包含关键词
+     * @return 返回结果
+     */
+    ResponseResult getInterfaceInfoByKeyword(SearchDTO searchDTO);
 }

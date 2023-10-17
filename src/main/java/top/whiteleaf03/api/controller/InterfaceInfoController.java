@@ -68,4 +68,10 @@ public class InterfaceInfoController {
     public ResponseResult updateInterfaceById(@RequestBody UpdateInterfaceDTO updateInterfaceDTO) {
         return interfaceInfoService.updateInterfaceById(updateInterfaceDTO);
     }
+
+    @TokenCheck("")
+    @GetMapping("search")
+    public ResponseResult getInterfaceInfoByKeyword(SearchDTO searchDTO) {
+        return interfaceInfoService.getInterfaceInfoByKeyword(searchDTO);
+    }
 }
