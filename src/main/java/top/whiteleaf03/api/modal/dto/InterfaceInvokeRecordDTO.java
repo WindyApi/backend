@@ -3,8 +3,7 @@ package top.whiteleaf03.api.modal.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * @author WhiteLeaf03
@@ -12,29 +11,75 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "interface_invoke_record")
 public class InterfaceInvokeRecordDTO {
     /**
-     * 主键
+     * 请求id
      */
-    private Long id;
+    private String id;
 
     /**
-     * 调用用户id
+     * 请求来源
      */
-    private Long userId;
+    private String remoteAddress;
 
     /**
-     * 接口id
+     * 请求方式
      */
-    private Long interfaceId;
+    private String method;
 
     /**
-     * 创建时间
+     * 请求路径
      */
-    private Date createTime;
+    private String requestPath;
 
-    public InterfaceInvokeRecordDTO(Long userId, Long interfaceId) {
-        this.userId = userId;
-        this.interfaceId = interfaceId;
-    }
+    /**
+     * 携带时间戳
+     */
+    private Long timestamp;
+
+    /**
+     * 当前时间戳
+     */
+    private Long currentTimestamp;
+
+    /**
+     * 请求头
+     */
+    private org.bson.Document requestHeader;
+
+    /**
+     * 请求参数
+     */
+    private org.bson.Document requestParams;
+
+    /**
+     * 请求体
+     */
+    private org.bson.Document body;
+
+    /**
+     * 用户ak
+     */
+    private String accessKey;
+
+    /**
+     * 用户签名
+     */
+    private String sign;
+
+    /**
+     * 请求耗时
+     */
+    private Long useTime;
+
+    /**
+     * 是否通过
+     */
+    private Boolean accept;
+
+    /**
+     * 失败原因
+     */
+    private String msg;
 }
