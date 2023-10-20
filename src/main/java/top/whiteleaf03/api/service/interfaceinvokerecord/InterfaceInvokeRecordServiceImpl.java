@@ -75,7 +75,6 @@ public class InterfaceInvokeRecordServiceImpl implements InterfaceInvokeRecordSe
                 totalAccept = 0;
             }
             recentAcceptRate[index] = recentQPS[index] == 0 ? 0 : (double) totalAccept / recentQPS[index];
-            recentAcceptRate[index] = Math.round(recentAcceptRate[index] * 10000.0) / 10000.0;
         }
         return ResponseResult.success(new RecentRecordVO(recentQPS, recentUseTime, recentAcceptRate));
     }

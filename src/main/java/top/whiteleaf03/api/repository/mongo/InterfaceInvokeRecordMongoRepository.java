@@ -34,8 +34,8 @@ public interface InterfaceInvokeRecordMongoRepository extends MongoRepository<In
      * @return 返回请求通过网关的次数
      */
     @Aggregation(pipeline = {
-            "{ $match: { accept: { $e: true } } }",
-            "{ $group: { _id: null, totalAccept: { $sum: \"accept\" } } }"
+            "{ $match: { accept: true, currentTimestamp: { $lte: ?0, $gt: ?1 } } }",
+            "{ $group: { _id: null, count: { $sum: 1 } } }"
     })
     Long calculateTotalAcceptInRange(long maxTime, long minTime);
 }
