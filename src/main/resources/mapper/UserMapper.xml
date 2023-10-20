@@ -56,7 +56,7 @@
 
     <select id="selectIdAndSecretKeyByAccessKey"
             resultType="top.whiteleaf03.api.modal.dto.UserIdAndSecretKeyDTO">
-        SELECT id, secretKey
+        SELECT id as userId, secretKey
         FROM windy_api.user
         WHERE accessKey = #{accessKey};
     </select>

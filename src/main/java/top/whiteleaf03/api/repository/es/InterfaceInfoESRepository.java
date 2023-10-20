@@ -1,4 +1,4 @@
-package top.whiteleaf03.api.repository;
+package top.whiteleaf03.api.repository.es;
 
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
@@ -8,7 +8,7 @@ import top.whiteleaf03.api.modal.document.es.InterfaceInfoESDocument;
 import java.util.List;
 
 @Repository
-public interface InterfaceInfoRepository extends ElasticsearchRepository<InterfaceInfoESDocument, String> {
+public interface InterfaceInfoESRepository extends ElasticsearchRepository<InterfaceInfoESDocument, String> {
     @Query("{\n" +
             "    \"multi_match\": {\n" +
             "      \"query\": \"?0\",\n" +

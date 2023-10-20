@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import top.whiteleaf03.api.modal.document.es.InterfaceInfoESDocument;
-import top.whiteleaf03.api.repository.InterfaceInfoRepository;
+import top.whiteleaf03.api.repository.es.InterfaceInfoESRepository;
 import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.document.InterfaceInfoDocument;
@@ -18,7 +18,7 @@ import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.InterfaceDocVO;
 import top.whiteleaf03.api.modal.vo.InterfaceInfoVO;
 import top.whiteleaf03.api.modal.vo.OnlineInterfaceInfoVO;
-import top.whiteleaf03.api.util.MongoUtil;
+import top.whiteleaf03.api.repository.mongo.InterfaceInfoMongoRepository;
 import top.whiteleaf03.api.util.ResponseResult;
 
 import java.util.*;
@@ -31,15 +31,15 @@ import java.util.*;
 public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     private final InterfaceInfoMapper interfaceInfoMapper;
     private final UserMapper userMapper;
-    private final MongoUtil mongoUtil;
-    private final InterfaceInfoRepository interfaceInfoRepository;
+    private final InterfaceInfoMongoRepository interfaceInfoMongoRepository;
+    private final InterfaceInfoESRepository interfaceInfoESRepositoryRepository;
 
     @Autowired
-    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper, MongoUtil mongoUtil, InterfaceInfoRepository interfaceInfoRepository) {
+    public InterfaceInfoServiceImpl(InterfaceInfoMapper interfaceInfoMapper, UserMapper userMapper, InterfaceInfoMongoRepository interfaceInfoMongoRepository, InterfaceInfoESRepository interfaceInfoESRepositoryRepository) {
         this.interfaceInfoMapper = interfaceInfoMapper;
         this.userMapper = userMapper;
-        this.mongoUtil = mongoUtil;
-        this.interfaceInfoRepository = interfaceInfoRepository;
+        this.interfaceInfoMongoRepository = interfaceInfoMongoRepository;
+        this.interfaceInfoESRepositoryRepository = interfaceInfoESRepositoryRepository;
     }
 
     /**
@@ -54,7 +54,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         newInterfaceDTO.setUserId(user.getId());
         interfaceInfoMapper.insert(newInterfaceDTO);
         InterfaceInfoDocument interfaceInfoDocument = new InterfaceInfoDocument(newInterfaceDTO);
-        mongoUtil.save(interfaceInfoDocument);
+        interfaceInfoMongoRepository.save(interfaceInfoDocument);
         return ResponseResult.success();
     }
 
@@ -116,8 +116,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     @Override
     public ResponseResult queryInterfaceDocById(InterfaceIdDTO interfaceIdDTO) {
         InterfaceInfo interfaceInfo = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(interfaceIdDTO);
-        List<?> list = mongoUtil.find("interfaceInfoId", interfaceIdDTO.getId(), InterfaceInfoDocument.class);
-        InterfaceInfoDocument interfaceInfoDocument = (InterfaceInfoDocument) list.get(0);
+        InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findByInterfaceInfoId(interfaceIdDTO.getId()).get(0);
         InterfaceDocVO interfaceDocVO = new InterfaceDocVO(interfaceInfo, interfaceInfoDocument);
         return ResponseResult.success(interfaceDocVO);
     }
@@ -144,8 +143,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         List<InterfaceInfo> interfaceInfos = interfaceInfoMapper.selectIdAndNameAndDescribeAndMethodAndUrlAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(pageNumDTO);
         List<InterfaceInfoVO> interfaceInfoVOs = new ArrayList<>();
         for (InterfaceInfo interfaceInfo : interfaceInfos) {
-            List<?> list = mongoUtil.find("interfaceInfoId", interfaceInfo.getId(), InterfaceInfoDocument.class);
-            InterfaceInfoDocument interfaceInfoDocument = (InterfaceInfoDocument) list.get(0);
+            InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findByInterfaceInfoId(interfaceInfo.getId()).get(0);
             interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getUserId()), interfaceInfoDocument));
         }
         return ResponseResult.success(interfaceInfoVOs);
@@ -164,7 +162,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         data.put("params", updateInterfaceDTO.getParams());
         data.put("requestHeader", updateInterfaceDTO.getRequestHeader());
         data.put("responseHeader", updateInterfaceDTO.getResponseHeader());
-        mongoUtil.update("interfaceInfoId", updateInterfaceDTO.getId(), InterfaceInfoDocument.class, data);
+        interfaceInfoMongoRepository.update(updateInterfaceDTO.getId(), updateInterfaceDTO.getRequestHeader(), updateInterfaceDTO.getResponseHeader(), updateInterfaceDTO.getParams());
         return ResponseResult.success();
     }
 
@@ -179,7 +177,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         if (StrUtil.isBlank(searchDTO.getKeyword())) {
             return ResponseResult.error("参数不允许为空");
         }
-        List<InterfaceInfoESDocument> interfaceInfoESDocuments = interfaceInfoRepository.queryInterfaceInfoESDocumentByKeywordInNameOrDescribe(searchDTO.getKeyword());
+        List<InterfaceInfoESDocument> interfaceInfoESDocuments = interfaceInfoESRepositoryRepository.queryInterfaceInfoESDocumentByKeywordInNameOrDescribe(searchDTO.getKeyword());
         return ResponseResult.success(interfaceInfoESDocuments);
     }
 }
