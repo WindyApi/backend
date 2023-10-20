@@ -116,7 +116,6 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     @Override
     public ResponseResult queryInterfaceDocById(InterfaceIdDTO interfaceIdDTO) {
         InterfaceInfo interfaceInfo = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(interfaceIdDTO);
-        System.out.println(interfaceIdDTO.getId());
         InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findByInterfaceInfoId(interfaceIdDTO.getId()).get(0);
         InterfaceDocVO interfaceDocVO = new InterfaceDocVO(interfaceInfo, interfaceInfoDocument);
         return ResponseResult.success(interfaceDocVO);
