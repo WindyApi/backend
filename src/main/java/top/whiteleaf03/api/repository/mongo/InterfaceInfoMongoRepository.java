@@ -5,6 +5,8 @@ import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import top.whiteleaf03.api.modal.document.InterfaceInfoDocument;
 
+import java.util.*;
+
 public interface InterfaceInfoMongoRepository extends MongoRepository<InterfaceInfoDocument, String> {
     @Aggregation(pipeline = {
             "{ $match: { interfaceInfoId: ?0 } }",
@@ -12,4 +14,6 @@ public interface InterfaceInfoMongoRepository extends MongoRepository<InterfaceI
             "{ $out: 'interface_info'}"
     })
     void update(Long id, Document requestHeader, Document responseHeader, Document params);
+
+    List<InterfaceInfoDocument> findByInterfaceInfoId(Long interfaceInfoId);
 }

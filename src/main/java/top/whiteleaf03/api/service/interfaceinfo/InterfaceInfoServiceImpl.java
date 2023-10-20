@@ -116,7 +116,8 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
     @Override
     public ResponseResult queryInterfaceDocById(InterfaceIdDTO interfaceIdDTO) {
         InterfaceInfo interfaceInfo = interfaceInfoMapper.selectNameAndDescribeAndMethodAndUrlAndStatusAndCreateTimeAndUpdateTimeByIdAndIsDelete(interfaceIdDTO);
-        InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findById("interfaceInfoId").get();
+        System.out.println(interfaceIdDTO.getId());
+        InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findByInterfaceInfoId(interfaceIdDTO.getId()).get(0);
         InterfaceDocVO interfaceDocVO = new InterfaceDocVO(interfaceInfo, interfaceInfoDocument);
         return ResponseResult.success(interfaceDocVO);
     }
@@ -143,7 +144,7 @@ public class InterfaceInfoServiceImpl implements InterfaceInfoService {
         List<InterfaceInfo> interfaceInfos = interfaceInfoMapper.selectIdAndNameAndDescribeAndMethodAndUrlAndStatusAndUserIdAndCreateTimeAndUpdateTimeByPageNumAndIsDelete(pageNumDTO);
         List<InterfaceInfoVO> interfaceInfoVOs = new ArrayList<>();
         for (InterfaceInfo interfaceInfo : interfaceInfos) {
-            InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findById("interfaceInfoId").get();
+            InterfaceInfoDocument interfaceInfoDocument = interfaceInfoMongoRepository.findByInterfaceInfoId(interfaceInfo.getId()).get(0);
             interfaceInfoVOs.add(new InterfaceInfoVO(interfaceInfo, userMapper.selectNicknameById(interfaceInfo.getUserId()), interfaceInfoDocument));
         }
         return ResponseResult.success(interfaceInfoVOs);
