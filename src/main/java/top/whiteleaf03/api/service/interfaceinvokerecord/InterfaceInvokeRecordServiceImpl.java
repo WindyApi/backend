@@ -40,14 +40,13 @@ public class InterfaceInvokeRecordServiceImpl implements InterfaceInvokeRecordSe
     public ResponseResult getRecentRecord() {
         final int TIMES = 5;
         final long ONE_MINUTE_MILLIS = 60000L;
-
-        long currentTimeMillis = System.currentTimeMillis() / 1000 * 1000;
+        long currentTimeMillis = System.currentTimeMillis() / 60000 * 60000;
         Long[] recentQPS = new Long[TIMES];
         Long[] recentUseTime = new Long[TIMES];
         Double[] recentAcceptRate = new Double[TIMES];
         for (int index = 0; index < TIMES; index++) {
-            long maxTime = currentTimeMillis - index * ONE_MINUTE_MILLIS;
-            long minTime = currentTimeMillis - (index + 1) * ONE_MINUTE_MILLIS;
+            long maxTime = currentTimeMillis - (index - 1) * ONE_MINUTE_MILLIS;
+            long minTime = currentTimeMillis - index * ONE_MINUTE_MILLIS;
 
             // 计算QPS
             long qps;
