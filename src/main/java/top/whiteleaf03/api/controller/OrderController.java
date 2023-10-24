@@ -21,13 +21,13 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @PostMapping("")
     public ResponseResult createNewOrder(@RequestBody NewOrderDTO newOrderDTO) {
         return orderService.insertOrder(newOrderDTO);
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @GetMapping("")
     public ResponseResult getSelfOrder(QuerySelfOrderDTO querySelfOrderDTO) {
         if (ObjectUtil.isNotNull(querySelfOrderDTO.getPageNum()) && querySelfOrderDTO.getPageNum() >= 0) {

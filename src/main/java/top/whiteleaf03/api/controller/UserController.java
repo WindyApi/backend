@@ -41,31 +41,31 @@ public class UserController {
         return captchaService.getCaptcha();
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @PostMapping("avatar")
     public ResponseResult editAvatar(@RequestParam("file") MultipartFile multipartFile) throws IOException {
         return userService.editAvatar(multipartFile);
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @GetMapping("verify")
     public ResponseResult getVerifyCodeByEmail() {
         return userService.getVerifyCodeByEmail();
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @PutMapping("info")
     public ResponseResult editUserInfo(@RequestBody EditUserInfoDTO editUserInfoDTO) {
         return userService.editUserInfo(editUserInfoDTO);
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @GetMapping("resetKey")
     public ResponseResult resetAccessKeyAndSecretKey() {
         return userService.resetAccessKeyAndSecretKey();
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @PutMapping("password")
     public ResponseResult editPassword(@RequestBody EditPasswordDTO editPasswordDTO) {
         return userService.editPassword(editPasswordDTO);

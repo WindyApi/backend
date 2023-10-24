@@ -57,4 +57,9 @@ public interface UserInterfaceRecordMapper {
      * @param userIdAndInterfaceIdDTO 用户id和接口id
      */
     void updateLeftNumByUserIdAndInterfaceId(UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO);
+
+    /**
+     * 游客次数刷新
+     */
+    void increaseGuestTotalNum();
 }

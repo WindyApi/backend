@@ -1,5 +1,6 @@
 package top.whiteleaf03.api.aop;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,7 @@ public class TokenAspect {
         }
 
         //鉴权
-        if (StrUtil.isNotBlank(tokenCheck.value()) && !tokenCheck.value().equals(user.getRole())) {
+        if (ArrayUtil.isNotEmpty(tokenCheck.value()) && !ArrayUtil.contains(tokenCheck.value(), user.getRole())) {
             return ResponseResult.authFailed("无权限访问");
         }
 

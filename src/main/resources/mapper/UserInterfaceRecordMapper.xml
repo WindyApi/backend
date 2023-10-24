@@ -36,4 +36,10 @@
         SET leftNum = leftNum - 1
         WHERE userId = #{userId} AND interfaceId = #{interfaceId};
     </update>
+
+    <update id="increaseGuestTotalNum">
+        UPDATE windy_api.user_interface_record
+        SET leftNum = 20
+        WHERE userId = -1;
+    </update>
 </mapper>

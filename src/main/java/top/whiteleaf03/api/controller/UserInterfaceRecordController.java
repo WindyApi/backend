@@ -21,7 +21,7 @@ public class UserInterfaceRecordController {
         this.userInterfaceRecordService = userInterfaceRecordService;
     }
 
-    @TokenCheck("")
+    @TokenCheck({})
     @GetMapping("")
     ResponseResult queryByUserId() {
         return userInterfaceRecordService.queryByUserId();

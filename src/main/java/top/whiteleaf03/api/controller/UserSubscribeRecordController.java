@@ -21,13 +21,13 @@ public class UserSubscribeRecordController {
         this.userSubscribeRecordService = userSubscribeRecordService;
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @PostMapping("")
     public ResponseResult newRecord(@RequestBody UserSubscribeDTO userSubscribeDTO) {
         return userSubscribeRecordService.newRecord(userSubscribeDTO);
     }
 
-    @TokenCheck("")
+    @TokenCheck({"admin", "normal"})
     @GetMapping("")
     public ResponseResult queryRecord(InterfaceIdDTO interfaceIdDTO) {
         return userSubscribeRecordService.queryRecord(interfaceIdDTO);

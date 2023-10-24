@@ -2,6 +2,7 @@ package top.whiteleaf03.api.service.userinterfaceinfo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -82,5 +83,15 @@ public class UserInterfaceRecordServiceImpl implements UserInterfaceRecordServic
             userInterfaceRecordMapper.increase(userSubscribeDTO);
         }
         return ResponseResult.success();
+    }
+
+    /**
+     * 游客账号每日刷新
+     */
+    @Scheduled(cron = "0 0 0 * * ?")
+    private void increaseGuestTotalNum() {
+        log.info("游客账户可调用次数重置中...");
+        userInterfaceRecordMapper.increaseGuestTotalNum();
+        log.info("游客账户可调用次数充值完毕");
     }
 }

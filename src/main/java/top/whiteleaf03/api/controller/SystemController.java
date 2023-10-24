@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.whiteleaf03.api.aop.TokenCheck;
 import top.whiteleaf03.api.service.interfaceinvokerecord.InterfaceInvokeRecordService;
 import top.whiteleaf03.api.util.ResponseResult;
 
@@ -20,6 +21,7 @@ public class SystemController {
         this.interfaceInvokeRecordService = interfaceInvokeRecordService;
     }
 
+    @TokenCheck({})
     @GetMapping("")
     public ResponseResult getRecentRecord() {
         return interfaceInvokeRecordService.getRecentRecord();

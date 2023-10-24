@@ -6,18 +6,14 @@ import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import top.whiteleaf03.api.config.GlobalConfig;
 import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.dto.*;
+import top.whiteleaf03.api.util.Guest;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.LoginVO;
 import top.whiteleaf03.api.modal.vo.RegisterVO;
@@ -100,6 +96,17 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResponseResult login(LoginDTO loginDTO) {
+        if (Guest.ACCOUNT.equals(loginDTO.getAccount())) {
+            //游客登录 直接放行
+            String token = TokenUtils.createToken(Guest.UID);
+
+            //保存token和用户信息
+            redisCache.setCacheObject("[OnlineUserToken]" + Guest.ID, token, 1, TimeUnit.HOURS);
+            redisCache.setCacheObject("[OnlineUserInfo]" + Guest.ID, Guest.ENTITY, 1, TimeUnit.HOURS);
+
+            return ResponseResult.success(new LoginVO(Guest.ENTITY, token));
+        }
+
         //验证码校验
         String code = redisCache.getCacheObject("[Captcha]" + loginDTO.getIdentity());
         redisCache.deleteObject("[Captcha]" + loginDTO.getIdentity());
@@ -243,6 +250,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResponseResult getVerifyCode(GetVerifyCodeByAccount getVerifyCodeByAccount) {
+        if (Guest.ACCOUNT.equals(getVerifyCodeByAccount.getAccount())) {
+            //游客账户不允许重置
+            return ResponseResult.refuse("游客账户不允许重置");
+        }
         String account = getVerifyCodeByAccount.getAccount();
         UserIdAndEmailVO userIdAndEmailVO = userMapper.selectIdAndEmailByAccount(account);
         String email = userIdAndEmailVO.getEmail();
@@ -261,6 +272,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResponseResult resetPassword(ResetPasswordDTO resetPasswordDTO) {
+        if (Guest.ACCOUNT.equals(resetPasswordDTO.getAccount())) {
+            //游客账户不允许重置
+            return ResponseResult.refuse("游客账户不允许重置");
+        }
         String account = resetPasswordDTO.getAccount();
         String verifyCode = resetPasswordDTO.getVerifyCode();
         Long id = redisCache.getCacheObject("[VerifyCode]" + account + verifyCode);

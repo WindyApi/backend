@@ -33,7 +33,7 @@ public class InterfaceInfoController {
         return interfaceInfoService.setStatus(updateInterfaceStatusDTO);
     }
 
-    @TokenCheck("")
+    @TokenCheck({})
     @GetMapping("online")
     public ResponseResult queryAliveInterfaceByPage(PageNumDTO pageNumDTO) {
         Integer pageNum = pageNumDTO.getPageNum();
@@ -45,7 +45,7 @@ public class InterfaceInfoController {
         return interfaceInfoService.queryAliveInterfacePageSize();
     }
 
-    @TokenCheck("")
+    @TokenCheck({})
     @GetMapping("")
     public ResponseResult queryInterfaceDoc(InterfaceIdDTO interfaceIdDTO) {
         return interfaceInfoService.queryInterfaceDocById(interfaceIdDTO);
@@ -69,7 +69,7 @@ public class InterfaceInfoController {
         return interfaceInfoService.updateInterfaceById(updateInterfaceDTO);
     }
 
-    @TokenCheck("")
+    @TokenCheck({})
     @GetMapping("search")
     public ResponseResult getInterfaceInfoByKeyword(SearchDTO searchDTO) {
         return interfaceInfoService.getInterfaceInfoByKeyword(searchDTO);
