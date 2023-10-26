@@ -1,23 +1,35 @@
-package top.whiteleaf03.api.service.interfaceinvokerecord;
+package top.whiteleaf03.api.service.system;
 
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.whiteleaf03.api.modal.dto.InterfaceInvokeRecordDTO;
+import top.whiteleaf03.api.modal.vo.NodeInfoVO;
 import top.whiteleaf03.api.modal.vo.RecentRecordVO;
+import top.whiteleaf03.api.modal.vo.SystemInfoVO;
 import top.whiteleaf03.api.repository.mongo.InterfaceInvokeRecordMongoRepository;
 import top.whiteleaf03.api.util.ResponseResult;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author WhiteLeaf03
  */
 @Service
-public class InterfaceInvokeRecordServiceImpl implements InterfaceInvokeRecordService {
+public class SystemServiceImpl implements SystemService {
     private final InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository;
 
     @Autowired
-    public InterfaceInvokeRecordServiceImpl(InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository) {
+    public SystemServiceImpl(InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository) {
         this.interfaceInvokeRecordMongoRepository = interfaceInvokeRecordMongoRepository;
     }
 
@@ -33,11 +45,7 @@ public class InterfaceInvokeRecordServiceImpl implements InterfaceInvokeRecordSe
         interfaceInvokeRecordMongoRepository.save(interfaceInvokeRecordDTO);
     }
 
-    /**
-     * 获取最近调用记录
-     */
-    @Override
-    public ResponseResult getRecentRecord() {
+    private RecentRecordVO getRecentRecord() {
         final int TIMES = 5;
         final long ONE_MINUTE_MILLIS = 60000L;
         long currentTimeMillis = System.currentTimeMillis() / 60000 * 60000;
@@ -75,6 +83,47 @@ public class InterfaceInvokeRecordServiceImpl implements InterfaceInvokeRecordSe
             }
             recentAcceptRate[index] = recentQPS[index] == 0 ? 0 : (double) totalAccept / recentQPS[index];
         }
-        return ResponseResult.success(new RecentRecordVO(recentQPS, recentUseTime, recentAcceptRate));
+        return new RecentRecordVO(recentQPS, recentUseTime, recentAcceptRate);
+    }
+
+    static final List<Map<String, String>> NODE_LIST = new ArrayList<Map<String, String>>() {{
+        add(new HashMap<String, String>() {{
+            put("name", "接口中心");
+            put("address", "165.154.161.106:8011");
+        }});
+        add(new HashMap<String, String>() {{
+            put("name", "用户中心");
+            put("address", "165.154.161.106:8001");
+        }});
+        add(new HashMap<String, String>() {{
+            put("name", "网关");
+            put("address", "165.154.161.106:8081");
+        }});
+    }};
+
+    private List<NodeInfoVO> getNodeInfo() {
+        List<NodeInfoVO> NodeInfoVOList = new ArrayList<>();
+        for (Map<String, String> map : NODE_LIST) {
+            String regex = "\"value\":(\\d+(?:\\.\\d+)?)";
+
+            String memoryInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/jvm.memory.used");
+            Double memoryUsed = Double.valueOf(ReUtil.get(regex, memoryInfoJson, 1));
+
+            String cpuInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/system.cpu.usage");
+            Double cpuUsed = Double.valueOf(ReUtil.get(regex, cpuInfoJson, 1));
+
+            NodeInfoVOList.add(new NodeInfoVO(map.get("name"), map.get("address").substring(0, map.get("address").indexOf(":")), memoryUsed, cpuUsed));
+        }
+        return NodeInfoVOList;
+    }
+
+    /**
+     * 获取系统信息
+     */
+    @Override
+    public ResponseResult getSystemInfo() {
+        RecentRecordVO recentRecord = getRecentRecord();
+        List<NodeInfoVO> nodeInfoVOList = getNodeInfo();
+        return ResponseResult.success(new SystemInfoVO(recentRecord, nodeInfoVOList));
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.whiteleaf03.api.aop.TokenCheck;
-import top.whiteleaf03.api.service.interfaceinvokerecord.InterfaceInvokeRecordService;
+import top.whiteleaf03.api.service.system.SystemService;
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
@@ -14,16 +14,16 @@ import top.whiteleaf03.api.util.ResponseResult;
 @RestController
 @RequestMapping("/system")
 public class SystemController {
-    private final InterfaceInvokeRecordService interfaceInvokeRecordService;
+    private final SystemService systemService;
 
     @Autowired
-    public SystemController(InterfaceInvokeRecordService interfaceInvokeRecordService) {
-        this.interfaceInvokeRecordService = interfaceInvokeRecordService;
+    public SystemController(SystemService systemService) {
+        this.systemService = systemService;
     }
 
-    @TokenCheck({"admin"})
+//    @TokenCheck({"admin"})
     @GetMapping("")
-    public ResponseResult getRecentRecord() {
-        return interfaceInvokeRecordService.getRecentRecord();
+    public ResponseResult getSystemInfo() {
+        return systemService.getSystemInfo();
     }
 }

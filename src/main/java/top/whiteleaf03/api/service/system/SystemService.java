@@ -1,11 +1,11 @@
-package top.whiteleaf03.api.service.interfaceinvokerecord;
+package top.whiteleaf03.api.service.system;
 
 import top.whiteleaf03.api.util.ResponseResult;
 
 /**
  * @author WhiteLeaf03
  */
-public interface InterfaceInvokeRecordService {
+public interface SystemService {
     /**
      * 保存接口调用记录
      *
@@ -14,7 +14,7 @@ public interface InterfaceInvokeRecordService {
     void saveRecord(String recordJson);
 
     /**
-     * 获取最近调用记录
+     * 获取系统信息
      */
-    ResponseResult getRecentRecord();
+    ResponseResult getSystemInfo();
 }
