@@ -21,7 +21,7 @@ public class SystemController {
         this.interfaceInvokeRecordService = interfaceInvokeRecordService;
     }
 
-    @TokenCheck({})
+    @TokenCheck({"admin"})
     @GetMapping("")
     public ResponseResult getRecentRecord() {
         return interfaceInvokeRecordService.getRecentRecord();
