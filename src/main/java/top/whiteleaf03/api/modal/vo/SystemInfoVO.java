@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class SystemInfoVO {
     private RecentRecordVO recentRecordVO;
-    private List<NodeInfoVO> nodeInfoVOList;
+    private List<String> nodeInfoVOList;
 }

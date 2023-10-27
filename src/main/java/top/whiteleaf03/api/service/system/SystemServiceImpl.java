@@ -2,24 +2,21 @@ package top.whiteleaf03.api.service.system;
 
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import top.whiteleaf03.api.modal.dto.InterfaceInvokeRecordDTO;
 import top.whiteleaf03.api.modal.vo.NodeInfoVO;
 import top.whiteleaf03.api.modal.vo.RecentRecordVO;
 import top.whiteleaf03.api.modal.vo.SystemInfoVO;
 import top.whiteleaf03.api.repository.mongo.InterfaceInvokeRecordMongoRepository;
+import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author WhiteLeaf03
@@ -27,10 +24,12 @@ import java.util.Map;
 @Service
 public class SystemServiceImpl implements SystemService {
     private final InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository;
+    private final RedisCache redisCache;
 
     @Autowired
-    public SystemServiceImpl(InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository) {
+    public SystemServiceImpl(InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository, RedisCache redisCache) {
         this.interfaceInvokeRecordMongoRepository = interfaceInvokeRecordMongoRepository;
+        this.redisCache = redisCache;
     }
 
     /**
@@ -39,7 +38,7 @@ public class SystemServiceImpl implements SystemService {
      * @param recordJson 调用记录 InterfaceInvokeRecordDTO的JSON格式
      */
     @Override
-    @RabbitListener(queues = "interface_invoke_record")
+//    @RabbitListener(queues = "interface_invoke_record")
     public void saveRecord(String recordJson) {
         InterfaceInvokeRecordDTO interfaceInvokeRecordDTO = JSONUtil.toBean(recordJson, InterfaceInvokeRecordDTO.class);
         interfaceInvokeRecordMongoRepository.save(interfaceInvokeRecordDTO);
@@ -101,20 +100,37 @@ public class SystemServiceImpl implements SystemService {
         }});
     }};
 
-    private List<NodeInfoVO> getNodeInfo() {
+    private Double getValue(String jsonStr) {
+        JSONObject json = JSONUtil.parseObj(jsonStr);
+        JSONObject measurement = json.getJSONArray("measurements").getJSONObject(0);
+        return measurement.getDouble("value");
+    }
+
+    private String getNodeInfo() {
         List<NodeInfoVO> NodeInfoVOList = new ArrayList<>();
         for (Map<String, String> map : NODE_LIST) {
-            String regex = "\"value\":(\\d+(?:\\.\\d+)?)";
-
             String memoryInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/jvm.memory.used");
-            Double memoryUsed = Double.valueOf(ReUtil.get(regex, memoryInfoJson, 1));
-
+            Double memoryUsed = getValue(memoryInfoJson);
             String cpuInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/system.cpu.usage");
-            Double cpuUsed = Double.valueOf(ReUtil.get(regex, cpuInfoJson, 1));
-
+            Double cpuUsed = getValue(cpuInfoJson);
             NodeInfoVOList.add(new NodeInfoVO(map.get("name"), map.get("address").substring(0, map.get("address").indexOf(":")), memoryUsed, cpuUsed));
         }
-        return NodeInfoVOList;
+        return JSONUtil.toJsonStr(NodeInfoVOList);
+    }
+
+    // 每5秒执行一次
+    @Scheduled(fixedRate = 5000)
+    private void cacheSystemInfo() {
+        List<String> recentNodeInfo = redisCache.getCacheObject("nodeInfoVOList");
+        if (Objects.isNull(recentNodeInfo)) {
+            recentNodeInfo = new ArrayList<>(10);
+        }
+        // 队列满了 移掉最后一个
+        if (recentNodeInfo.size() == 10) {
+            recentNodeInfo.remove(9);
+        }
+        recentNodeInfo.add(0, getNodeInfo());
+        redisCache.setObject("nodeInfoVOList", recentNodeInfo);
     }
 
     /**
@@ -123,7 +139,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public ResponseResult getSystemInfo() {
         RecentRecordVO recentRecord = getRecentRecord();
-        List<NodeInfoVO> nodeInfoVOList = getNodeInfo();
+        List<String> nodeInfoVOList = redisCache.getCacheObject("nodeInfoVOList");
         return ResponseResult.success(new SystemInfoVO(recentRecord, nodeInfoVOList));
     }
 }
