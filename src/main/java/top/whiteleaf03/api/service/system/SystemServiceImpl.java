@@ -38,7 +38,7 @@ public class SystemServiceImpl implements SystemService {
      * @param recordJson 调用记录 InterfaceInvokeRecordDTO的JSON格式
      */
     @Override
-//    @RabbitListener(queues = "interface_invoke_record")
+    @RabbitListener(queues = "interface_invoke_record")
     public void saveRecord(String recordJson) {
         InterfaceInvokeRecordDTO interfaceInvokeRecordDTO = JSONUtil.toBean(recordJson, InterfaceInvokeRecordDTO.class);
         interfaceInvokeRecordMongoRepository.save(interfaceInvokeRecordDTO);

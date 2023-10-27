@@ -3,7 +3,6 @@ package top.whiteleaf03.api.util;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import top.whiteleaf03.api.modal.vo.SystemInfoVO;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
