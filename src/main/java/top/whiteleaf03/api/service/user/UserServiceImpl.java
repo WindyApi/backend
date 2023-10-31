@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,17 +12,17 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import top.whiteleaf03.api.config.GlobalConfig;
+import top.whiteleaf03.api.mapper.InterfaceInfoMapper;
+import top.whiteleaf03.api.mapper.UserInterfaceRecordMapper;
 import top.whiteleaf03.api.mapper.UserMapper;
 import top.whiteleaf03.api.modal.dto.*;
-import top.whiteleaf03.api.util.Guest;
+import top.whiteleaf03.api.modal.entity.InterfaceInfo;
+import top.whiteleaf03.api.util.*;
 import top.whiteleaf03.api.modal.entity.User;
 import top.whiteleaf03.api.modal.vo.LoginVO;
 import top.whiteleaf03.api.modal.vo.RegisterVO;
 import top.whiteleaf03.api.modal.vo.UserIdAndEmailVO;
 import top.whiteleaf03.api.service.email.EmailService;
-import top.whiteleaf03.api.util.RedisCache;
-import top.whiteleaf03.api.util.ResponseResult;
-import top.whiteleaf03.api.util.TokenUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,13 +44,17 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RedisCache redisCache;
     private final EmailService emailService;
+    private final InterfaceInfoMapper interfaceInfoMapper;
+    private final UserInterfaceRecordMapper userInterfaceRecordMapper;
 
     @Autowired
-    public UserServiceImpl(GlobalConfig globalConfig, UserMapper userMapper, RedisCache redisCache, EmailService emailService) {
+    public UserServiceImpl(GlobalConfig globalConfig, UserMapper userMapper, RedisCache redisCache, EmailService emailService, InterfaceInfoMapper interfaceInfoMapper, UserInterfaceRecordMapper userInterfaceRecordMapper) {
         this.globalConfig = globalConfig;
         this.userMapper = userMapper;
         this.redisCache = redisCache;
         this.emailService = emailService;
+        this.interfaceInfoMapper = interfaceInfoMapper;
+        this.userInterfaceRecordMapper = userInterfaceRecordMapper;
     }
 
     /**
@@ -285,5 +290,49 @@ public class UserServiceImpl implements UserService {
         String newPassword = DigestUtil.bcrypt(resetPasswordDTO.getNewPassword());
         userMapper.updatePasswordById(new EditPasswordDTO(id, newPassword));
         return ResponseResult.success();
+    }
+
+    /**
+     * 用户调用API
+     *
+     * @param invokeApiDTO 包含相关信息
+     * @return 返回调用结果
+     */
+    @Override
+    public ResponseResult invokeApi(InvokeApiDTO invokeApiDTO) {
+        InterfaceInfo interfaceInfo = interfaceInfoMapper.selectMethodAndUrlByInterfaceId(invokeApiDTO.getInterfaceId());
+        User user = (User) RequestContextHolder.getRequestAttributes().getAttribute("UserInfo", RequestAttributes.SCOPE_REQUEST);
+        Long userId = user.getId();
+        
+        // 判断剩余次数
+        UserIdAndInterfaceIdDTO userIdAndInterfaceIdDTO = new UserIdAndInterfaceIdDTO(userId, invokeApiDTO.getInterfaceId());
+        Long leftNum = userInterfaceRecordMapper.selectLeftNumByUserIdAndInterfaceId(userIdAndInterfaceIdDTO);
+        if (ObjectUtil.isNotNull(leftNum) && leftNum > 0) {
+            userInterfaceRecordMapper.updateLeftNumByUserIdAndInterfaceId(userIdAndInterfaceIdDTO);
+        } else {
+            return ResponseResult.refuse("接口尚未开通或调用次数已用完");
+        }
+        AccessKeyAndSecretKeyDTO accessKeyAndSecretKeyDTO = userMapper.selectAccessKeyAndSecretKeyById(userId);
+        String result = invokeAndGetResult(invokeApiDTO, accessKeyAndSecretKeyDTO, interfaceInfo);
+        return JSONUtil.toBean(result, ResponseResult.class);
+    }
+
+    private String invokeAndGetResult(InvokeApiDTO invokeApiDTO, AccessKeyAndSecretKeyDTO accessKeyAndSecretKeyDTO, InterfaceInfo interfaceInfo) {
+        WindyApiClient windyApiClient = new WindyApiClient(globalConfig.getGatewayHost(), accessKeyAndSecretKeyDTO);
+        String result;
+        if ("GET".equals(interfaceInfo.getMethod())) {
+            HashMap<String, Object> params = invokeApiDTO.getParamsJson();
+            if (Objects.isNull(params)) {
+                params = new HashMap<>();
+            }
+            result = windyApiClient.invokeApiByGet(params, interfaceInfo.getUrl());
+        } else {
+            HashMap<String, Object> data = invokeApiDTO.getDataJson();
+            if (Objects.isNull(data)) {
+                data = new HashMap<>();
+            }
+            result = windyApiClient.invokeApiByPost(data, interfaceInfo.getUrl());
+        }
+        return result;
     }
 }

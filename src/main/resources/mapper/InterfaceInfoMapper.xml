@@ -69,4 +69,10 @@
         FROM windy_api.interface_info
         WHERE url = #{url};
     </select>
+
+    <select id="selectMethodAndUrlByInterfaceId" resultType="top.whiteleaf03.api.modal.entity.InterfaceInfo">
+        SELECT method, url
+        FROM windy_api.interface_info
+        WHERE id = #{interfaceId};
+    </select>
 </mapper>

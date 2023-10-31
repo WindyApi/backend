@@ -77,4 +77,12 @@ public interface UserMapper {
      * @return 返回用户的id和sk
      */
     UserIdAndSecretKeyDTO selectIdAndSecretKeyByAccessKey(String accessKey);
+
+    /**
+     * 根据id获取ak和sk
+     *
+     * @param userId 用户id
+     * @return ak和sk
+     */
+    AccessKeyAndSecretKeyDTO selectAccessKeyAndSecretKeyById(Long userId);
 }

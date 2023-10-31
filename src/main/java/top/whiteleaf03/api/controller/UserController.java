@@ -80,4 +80,10 @@ public class UserController {
     public ResponseResult resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
         return userService.resetPassword(resetPasswordDTO);
     }
+
+    @TokenCheck({})
+    @PostMapping("invoke")
+    public ResponseResult invokeApi(@RequestBody InvokeApiDTO invokeApiDTO) {
+        return userService.invokeApi(invokeApiDTO);
+    }
 }

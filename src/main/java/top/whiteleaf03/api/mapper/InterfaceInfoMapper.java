@@ -87,4 +87,12 @@ public interface InterfaceInfoMapper {
      * @return 返回结果
      */
     InterfaceIdAndStatusDTO selectIdAndStatusByUrl(String url);
+
+    /**
+     * 根据接口id获取请求方式和路径
+     *
+     * @param interfaceId 接口id
+     * @return 包含请求方式和路径
+     */
+    InterfaceInfo selectMethodAndUrlByInterfaceId(Long interfaceId);
 }

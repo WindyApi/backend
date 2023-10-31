@@ -19,6 +19,9 @@ import java.io.IOException;
 public class GlobalConfig {
     @Value("${key.salt}")
     private String salt;
+
+    @Value("${gateway.host}")
+    private String gatewayHost;
 }
 
 class PropertySourceFactoryImpl implements PropertySourceFactory {

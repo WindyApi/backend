@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * @author WhiteLeaf03
@@ -12,16 +12,19 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InterfaceIdAndStatusDTO implements Serializable {
+public class InvokeApiDTO {
     /**
      * 接口id
      */
     private Long interfaceId;
 
     /**
-     * 接口状态
-     * true 上线
-     * false 离线
+     * GET请求参数
      */
-    private Boolean status;
+    private HashMap<String, Object> paramsJson;
+
+    /**
+     * POST请求参数
+     */
+    private HashMap<String, Object> dataJson;
 }

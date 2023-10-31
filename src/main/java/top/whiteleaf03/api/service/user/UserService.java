@@ -78,4 +78,12 @@ public interface UserService {
      * @return 返回结果
      */
     ResponseResult resetPassword(ResetPasswordDTO resetPasswordDTO);
+
+    /**
+     * 用户调用API
+     *
+     * @param invokeApiDTO 包含相关信息
+     * @return 返回调用结果
+     */
+    ResponseResult invokeApi(InvokeApiDTO invokeApiDTO);
 }
