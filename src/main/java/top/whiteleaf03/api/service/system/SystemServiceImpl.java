@@ -15,6 +15,7 @@ import top.whiteleaf03.api.repository.mongo.InterfaceInvokeRecordMongoRepository
 import top.whiteleaf03.api.util.RedisCache;
 import top.whiteleaf03.api.util.ResponseResult;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -24,6 +25,7 @@ import java.util.*;
 public class SystemServiceImpl implements SystemService {
     private final InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository;
     private final RedisCache redisCache;
+    private final SimpleDateFormat nodeInfoDateFormat = new SimpleDateFormat("mm:ss");
 
     @Autowired
     public SystemServiceImpl(InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository, RedisCache redisCache) {
@@ -105,14 +107,15 @@ public class SystemServiceImpl implements SystemService {
         return measurement.getDouble("value");
     }
 
-    private String getNodeInfo() {
+    private String getNodeInfo(Date now) {
         List<NodeInfoVO> NodeInfoVOList = new ArrayList<>();
         for (Map<String, String> map : NODE_LIST) {
             String memoryInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/jvm.memory.used");
             Double memoryUsed = getValue(memoryInfoJson);
             String cpuInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/system.cpu.usage");
             Double cpuUsed = getValue(cpuInfoJson);
-            NodeInfoVOList.add(new NodeInfoVO(map.get("name"), map.get("address").substring(0, map.get("address").indexOf(":")), memoryUsed, cpuUsed));
+            String date = nodeInfoDateFormat.format(now);
+            NodeInfoVOList.add(new NodeInfoVO(map.get("name"), map.get("address").substring(0, map.get("address").indexOf(":")), memoryUsed, cpuUsed, date));
         }
         return JSONUtil.toJsonStr(NodeInfoVOList);
     }
@@ -128,7 +131,7 @@ public class SystemServiceImpl implements SystemService {
         if (recentNodeInfo.size() == 10) {
             recentNodeInfo.remove(9);
         }
-        recentNodeInfo.add(0, getNodeInfo());
+        recentNodeInfo.add(0, getNodeInfo(new Date()));
         redisCache.setObject("nodeInfoVOList", recentNodeInfo);
     }
 

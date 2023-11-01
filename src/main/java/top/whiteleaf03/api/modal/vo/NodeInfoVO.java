@@ -27,4 +27,9 @@ public class NodeInfoVO {
      * CPU使用量
      */
     private Double cpuUsage;
+
+    /**
+     * 获取时间
+     */
+    private String date;
 }
