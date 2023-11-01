@@ -226,6 +226,7 @@ public class UserServiceImpl implements UserService {
         String secretKey = DigestUtil.sha256Hex(globalConfig.getSalt() + RandomUtil.randomString(12));
         String email = userMapper.selectEmailById(user.getId());
         emailService.sentEmail(new EmailInfoDTO(email, "重置密钥", "您的新密钥，请妥善保管!\n[accessKey]" + accessKey + "\n[secretKey]" + secretKey));
+        userMapper.updateAccessKeyAndSecretKeyById(new User(user.getId(), accessKey, secretKey));
         return ResponseResult.success();
     }
 

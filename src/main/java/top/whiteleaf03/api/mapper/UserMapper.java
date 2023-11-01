@@ -85,4 +85,11 @@ public interface UserMapper {
      * @return ak和sk
      */
     AccessKeyAndSecretKeyDTO selectAccessKeyAndSecretKeyById(Long userId);
+
+    /**
+     * 根据id更新ak和sk
+     *
+     * @param user id和ak和sk
+     */
+    void updateAccessKeyAndSecretKeyById(User user);
 }

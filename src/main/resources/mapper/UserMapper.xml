@@ -48,6 +48,12 @@
         WHERE id = #{id};
     </update>
 
+    <update id="updateAccessKeyAndSecretKeyById">
+        UPDATE windy_api.user
+        SET accessKey = #{accessKey}, secretKey = #{secretKey}
+        WHERE id = #{id};
+    </update>
+
     <select id="selectIdAndEmailByAccount" resultType="top.whiteleaf03.api.modal.vo.UserIdAndEmailVO">
         SELECT id, email
         FROM windy_api.user

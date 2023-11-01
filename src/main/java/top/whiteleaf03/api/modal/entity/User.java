@@ -80,4 +80,10 @@ public class User {
      * 是否删除
      */
     private Integer isDelete;
+
+    public User(Long id, String accessKey, String secretKey) {
+        this.id = id;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+    }
 }
