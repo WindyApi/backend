@@ -25,7 +25,6 @@ import java.util.*;
 public class SystemServiceImpl implements SystemService {
     private final InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository;
     private final RedisCache redisCache;
-    private final SimpleDateFormat nodeInfoDateFormat = new SimpleDateFormat("mm:ss");
 
     @Autowired
     public SystemServiceImpl(InterfaceInvokeRecordMongoRepository interfaceInvokeRecordMongoRepository, RedisCache redisCache) {
@@ -45,6 +44,11 @@ public class SystemServiceImpl implements SystemService {
         interfaceInvokeRecordMongoRepository.save(interfaceInvokeRecordDTO);
     }
 
+    /**
+     * 获取最近调用情况
+     *
+     * @return 返回接口调用情况
+     */
     private RecentRecordVO getRecentRecord() {
         final int TIMES = 5;
         final long ONE_MINUTE_MILLIS = 60000L;
@@ -86,62 +90,13 @@ public class SystemServiceImpl implements SystemService {
         return new RecentRecordVO(recentQPS, recentUseTime, recentAcceptRate);
     }
 
-    static final List<Map<String, String>> NODE_LIST = new ArrayList<Map<String, String>>() {{
-        add(new HashMap<String, String>() {{
-            put("name", "接口中心");
-            put("address", "165.154.161.106:8011");
-        }});
-        add(new HashMap<String, String>() {{
-            put("name", "用户中心");
-            put("address", "165.154.161.106:8001");
-        }});
-        add(new HashMap<String, String>() {{
-            put("name", "网关");
-            put("address", "165.154.161.106:8081");
-        }});
-    }};
-
-    private Double getValue(String jsonStr) {
-        JSONObject json = JSONUtil.parseObj(jsonStr);
-        JSONObject measurement = json.getJSONArray("measurements").getJSONObject(0);
-        return measurement.getDouble("value");
-    }
-
-    private String getNodeInfo(Date now) {
-        List<NodeInfoVO> NodeInfoVOList = new ArrayList<>();
-        for (Map<String, String> map : NODE_LIST) {
-            String memoryInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/jvm.memory.used");
-            Double memoryUsed = getValue(memoryInfoJson);
-            String cpuInfoJson = HttpUtil.get(map.get("address") + "/actuator/metrics/system.cpu.usage");
-            Double cpuUsed = getValue(cpuInfoJson);
-            String date = nodeInfoDateFormat.format(now);
-            NodeInfoVOList.add(new NodeInfoVO(map.get("name"), map.get("address").substring(0, map.get("address").indexOf(":")), memoryUsed, cpuUsed, date));
-        }
-        return JSONUtil.toJsonStr(NodeInfoVOList);
-    }
-
-    // 每5秒执行一次
-    @Scheduled(fixedRate = 5000)
-    private void cacheSystemInfo() {
-        List<String> recentNodeInfo = redisCache.getCacheObject("nodeInfoVOList");
-        if (Objects.isNull(recentNodeInfo)) {
-            recentNodeInfo = new ArrayList<>(10);
-        }
-        // 队列满了 移掉最后一个
-        if (recentNodeInfo.size() == 10) {
-            recentNodeInfo.remove(9);
-        }
-        recentNodeInfo.add(0, getNodeInfo(new Date()));
-        redisCache.setObject("nodeInfoVOList", recentNodeInfo);
-    }
-
     /**
      * 获取系统信息
      */
     @Override
     public ResponseResult getSystemInfo() {
         RecentRecordVO recentRecord = getRecentRecord();
-        List<String> nodeInfoVOList = redisCache.getCacheObject("nodeInfoVOList");
+        List<String> nodeInfoVOList = redisCache.getCacheObject("DockerContainerInfo");
         return ResponseResult.success(new SystemInfoVO(recentRecord, nodeInfoVOList));
     }
 }
