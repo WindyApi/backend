@@ -21,7 +21,7 @@ public class SystemController {
         this.systemService = systemService;
     }
 
-//    @TokenCheck({"admin"})
+    @TokenCheck({"admin"})
     @GetMapping("")
     public ResponseResult getSystemInfo() {
         return systemService.getSystemInfo();
